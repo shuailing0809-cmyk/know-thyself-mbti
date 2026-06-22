@@ -23,7 +23,7 @@
 FastAPI 服务
   ├─ 托管 public/ 静态页面
   ├─ 接收反馈数据
-  └─ SQLite 持久化存储
+  └─ SQLite 临时存储（免费内测版）
 ```
 
 ## 三、已经完成的发布准备
@@ -36,6 +36,8 @@ FastAPI 服务
 - `app/state.py`：新增反馈记录和事件记录表。
 - `Dockerfile`：容器化部署入口。
 - `render.yaml`：可选的 Render 部署配置。
+
+当前 Render 配置采用免费内测模式，不启用持久化磁盘，避免触发绑卡流程。
 
 ## 四、上线前需要确认的资源
 
@@ -54,8 +56,9 @@ mbti.你的域名.com
 
 推荐优先级：
 
-1. 有持久化磁盘的云服务器或应用托管平台。
-2. Render / Railway / Fly.io 等支持 Docker 的应用平台。
+1. Render 免费 Web Service，用于最快拿到 HTTPS 内测链接。
+2. 有持久化磁盘的云服务器或应用托管平台，用于正式长期收集反馈。
+3. Railway / Fly.io 等支持 Docker 的应用平台。
 3. 纯静态托管平台只适合展示页面，不适合收集反馈数据。
 
 如果选择国内服务器和国内域名，可能需要备案。为了快速内测，可先使用海外或香港节点。
@@ -117,7 +120,8 @@ docker run -p 8000:8000 -v "$PWD/storage:/app/storage" know-thyself-mbti
 
 ```text
 启动命令：uvicorn app.main:app --host 0.0.0.0 --port $PORT
-持久化目录：/app/storage
+免费内测版：先不配置持久化磁盘，避免触发信用卡验证。
+正式运营版：后续再配置持久化目录 `/app/storage` 或外部数据库。
 健康检查：/health
 ```
 
