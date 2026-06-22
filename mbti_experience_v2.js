@@ -945,7 +945,8 @@ function buildReport(resultsMap) {
     `- 核心特质：${model.profile.core}`,
     `- 工作和生活：${model.profile.life}`,
     `- 沟通风格：${model.profile.communication}`,
-    `- 压力/协作提醒：${shortenText(`${model.profile.pressure} ${model.profile.teamwork}`, 110)}`,
+    `- 压力下的应对：${model.profile.pressure}`,
+    `- 团队协作：${model.profile.teamwork}`,
     "",
     "维度速览：",
     ...model.dimensionCards.map((item) => `- ${item.dimension}（${item.name}）：${item.natural}；${item.status}。${item.summary}`),
@@ -1008,13 +1009,8 @@ function renderReport(model) {
       <p><strong>核心：</strong>${escapeHtml(model.profile.core)}</p>
       <p><strong>工作和生活：</strong>${escapeHtml(model.profile.life)}</p>
       <p><strong>沟通：</strong>${escapeHtml(model.profile.communication)}</p>
-      <details class="report-details">
-        <summary>展开查看压力与团队合作提醒</summary>
-        <div class="report-details-body">
-          <p><strong>压力下：</strong>${escapeHtml(model.profile.pressure)}</p>
-          <p><strong>团队合作：</strong>${escapeHtml(model.profile.teamwork)}</p>
-        </div>
-      </details>
+      <p><strong>压力下的应对：</strong>${escapeHtml(model.profile.pressure)}</p>
+      <p><strong>团队协作：</strong>${escapeHtml(model.profile.teamwork)}</p>
       <p><strong>本次提醒：</strong>${escapeHtml(model.strategyNote)}</p>
     </section>
 
