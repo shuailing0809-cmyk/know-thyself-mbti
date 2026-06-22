@@ -153,6 +153,7 @@ select rating, usefulness, natural_type, strategy_type, clarity, created_at from
 /Users/shuailing/Documents/Playground/mbti_agent/docs/PUBLIC_RELEASE_PLAN.md
 /Users/shuailing/Documents/Playground/mbti_agent/docs/WECHAT_MENU_SETUP.md
 /Users/shuailing/Documents/Playground/mbti_agent/docs/AUTHORIZATION_AND_ACCESS.md
+/Users/shuailing/Documents/Playground/mbti_agent/docs/FEEDBACK_REVIEW_POLICY.md
 ```
 
 ## 当前边界
