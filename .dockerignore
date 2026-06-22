@@ -1,0 +1,8 @@
+.DS_Store
+.venv
+__pycache__
+*.pyc
+storage/*.sqlite3
+storage/*.log
+tmp
+mbti_agent_export

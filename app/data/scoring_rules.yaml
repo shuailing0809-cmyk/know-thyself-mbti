@@ -1,0 +1,134 @@
+# MBTI 评分规则 - YAML 格式
+
+# 维度定义
+dimensions:
+  - name: EI
+    full_name: "能量来源"
+    left: E  # 得分1-4倾向E
+    right: I  # 得分7-10倾向I
+    neutral: 5-6
+
+  - name: SN
+    full_name: "信息偏好"
+    left: S  # 得分1-4倾向S
+    right: N  # 得分7-10倾向N
+    neutral: 5-6
+
+  - name: TF
+    full_name: "决策权重"
+    left: T  # 得分1-4倾向T
+    right: F  # 得分7-10倾向F
+    neutral: 5-6
+
+  - name: JP
+    full_name: "行动组织"
+    left: J  # 得分1-4倾向J
+    right: P  # 得分7-10倾向P
+    neutral: 5-6
+
+# 证据层级与权重
+evidence_levels:
+  L1:
+    description: "自我标签（如「我很外向」）"
+    weight: 0.2
+    max_score_range: [4, 6]
+
+  L2:
+    description: "偏好表态（如「我一般更喜欢...」）"
+    weight: 0.5
+    max_score_range: [3, 7]
+
+  L3:
+    description: "行为过程（如「上次我先查了教程...」）"
+    weight: 0.8
+    max_score_range: [2, 8]
+
+  L4:
+    description: "稳定性与排他（如「几乎每次」「没计划我会焦虑」）"
+    weight: 1.0
+    score_range: [1, 10]
+
+# 评分规则
+scoring:
+  # 主问题评分
+  main_question:
+    only_L1_L2: [4, 6]      # 只有L1/L2时给4-6分
+    with_L3: [2, 8]         # 有L3行为证据时给2-8分
+    with_L4_stable: [1, 10]   # 有L4排他证据时可给极端分
+
+  # 追问问题评分
+  followup_question:
+    get_L3_after_followup: [2, 8]   # 追问后获得L3
+    still_L1_L2: [5, 5]            # 追问后仍只有L1/L2，给5分
+
+# 追问权重配置
+followup_weights:
+  main_question: 0.7       # 主问题权重70%
+  followup_question: 0.3    # 追问权重30%
+
+# 关键词修正权重
+keyword_weights:
+  strong_indicator: 1.0     # 强关键词
+  medium_indicator: 0.5     # 中等关键词
+  weak_indicator: 0.2     # 弱关键词
+
+# 置信度计算
+confidence:
+  base: 0.3
+
+  # 按证据情况计算
+  only_L1_L2: 0.35
+  with_L3: 0.55
+  with_L3_one_L4: 0.7
+  with_L3_two_L4: 0.85
+
+  # 追问后
+  followup_get_L3: 0.6
+  followup_still_L1_L2: 0.35
+
+# 差值判断规则
+score_gap:
+  clear:
+    min_gap: 6  # 差值>=6为明显倾向
+    range_left: [1, 3]
+    range_right: [8, 10]
+
+  mild:
+    gap: 4-5  # 差值为4-5为轻度倾向
+    range_left: [4]
+    range_right: [7]
+
+  mixed:
+    gap: 2-3  # 差值为2-3为混合
+    range: [5, 6]
+
+  unclear:
+    gap: 0-1  # 差值0-1为无法判断
+    default_score: 5
+
+# 最终类型组合逻辑
+type_combination:
+  # 四维得分 -> 16型映射
+  # E/I + S/N + T/F + J/P
+  logic: "按四维得分(1-4倾向左端字母，7-10倾向右端字母)组合"
+
+# 置信度等级
+confidence_levels:
+  high:
+    threshold: 0.65
+    output: "明确类型结论"
+
+  medium:
+    threshold: 0.45
+    output: "类型结论（参考方向）"
+
+  low:
+    threshold: 0.0
+    output: "当前倾向（参考方向）"
+
+# 低置信度输出规则
+low_confidence_output:
+  score: 5
+  confidence: 0.3
+  statement: "当前信息不足以支撑明确的类型判断"
+  recommendation: "建议进一步探索后再下定论"

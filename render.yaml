@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: know-thyself-mbti
+    env: docker
+    plan: starter
+    autoDeploy: false
+    disk:
+      name: mbti-data
+      mountPath: /app/storage
+      sizeGB: 1
+    healthCheckPath: /health

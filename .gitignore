@@ -1,0 +1,9 @@
+.venv/
+.DS_Store
+__pycache__/
+*.pyc
+.pytest_cache/
+storage/*.sqlite3
+storage/*.log
+tmp/
+MBTI Agent Launcher.app/

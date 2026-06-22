@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MBTI 对话式测评</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="hero" aria-label="产品介绍">
+        <p class="eyebrow">对话式性格倾向探索</p>
+        <h1>MBTI 对话式测评</h1>
+        <p class="subtitle">
+          通过 4 个情境问题，帮助你看到自己的性格倾向。请像聊天一样回答，越接近真实经历越好。
+        </p>
+      </header>
+
+      <section class="experience-card" aria-label="测评对话">
+        <div class="card-header">
+          <div>
+            <h2>开始一轮测评</h2>
+            <p>每次只会出现一个问题，回答后再继续下一步。</p>
+          </div>
+          <button id="restartButton" class="ghost-button" type="button">
+            重新开始
+          </button>
+        </div>
+
+        <div id="messages" class="messages" aria-live="polite"></div>
+
+        <div id="startArea" class="start-area">
+          <button id="startButton" class="start-button" type="button">
+            开始测评
+          </button>
+          <p>大约 3-5 分钟完成。</p>
+        </div>
+
+        <form id="chatForm" class="composer">
+          <label class="sr-only" for="messageInput">输入你的回答</label>
+          <textarea
+            id="messageInput"
+            rows="3"
+            placeholder="请在这里输入你的回答"
+            autocomplete="off"
+          ></textarea>
+          <button id="sendButton" type="submit">发送</button>
+        </form>
+      </section>
+
+      <section id="reportPanel" class="report-panel is-hidden" aria-label="测评结果">
+        <div class="report-header">
+          <div>
+            <p class="eyebrow">你的测评结果</p>
+            <h2>MBTI 倾向分析报告</h2>
+          </div>
+          <button id="copyReportButton" class="ghost-button" type="button">
+            复制报告
+          </button>
+        </div>
+        <article id="reportContent" class="report-content"></article>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

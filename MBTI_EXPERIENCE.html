@@ -1,0 +1,1348 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MBTI 对话式测评</title>
+    <style>
+      :root {
+        --page: #f4f1ea;
+        --paper: #fffdf8;
+        --paper-strong: #ffffff;
+        --ink: #1f2a24;
+        --muted: #66716a;
+        --line: #ded7ca;
+        --agent: #ffffff;
+        --user: #dfeade;
+        --accent: #2f5f45;
+        --accent-hover: #254b37;
+        --danger: #a23b2a;
+        --shadow: 0 18px 48px rgba(31, 42, 36, 0.1);
+        --radius: 8px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-height: 100%;
+        background:
+          radial-gradient(circle at top left, rgba(111, 143, 106, 0.16), transparent 30rem),
+          linear-gradient(135deg, #f4f1ea 0%, #f8f6f1 52%, #efeadf 100%);
+      }
+
+      body {
+        margin: 0;
+        min-height: 100%;
+        color: var(--ink);
+        font-family:
+          "Songti SC",
+          "Noto Serif CJK SC",
+          "Source Han Serif SC",
+          "PingFang SC",
+          "Hiragino Sans GB",
+          "Microsoft YaHei",
+          serif;
+        line-height: 1.7;
+      }
+
+      button,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        border: 0;
+      }
+
+      .page-shell {
+        width: min(960px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 36px 0 56px;
+      }
+
+      .hero {
+        max-width: 760px;
+        margin: 0 auto 22px;
+        text-align: center;
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+      }
+
+      h1,
+      h2,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 10px;
+        font-size: clamp(32px, 5vw, 52px);
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+      }
+
+      .subtitle {
+        margin: 0 auto;
+        max-width: 620px;
+        color: var(--muted);
+        font-size: 16px;
+      }
+
+      .experience-card,
+      .report-panel {
+        border: 1px solid rgba(222, 215, 202, 0.86);
+        border-radius: var(--radius);
+        background: rgba(255, 253, 248, 0.92);
+        box-shadow: var(--shadow);
+      }
+
+      .card-header,
+      .report-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .card-header h2,
+      .report-header h2 {
+        margin: 0;
+        font-size: 22px;
+        line-height: 1.3;
+        letter-spacing: -0.02em;
+      }
+
+      .card-header p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .messages {
+        min-height: 380px;
+        max-height: 58vh;
+        overflow-y: auto;
+        padding: 24px 22px 8px;
+        scroll-behavior: smooth;
+      }
+
+      .message {
+        display: flex;
+        margin-bottom: 16px;
+      }
+
+      .message.user {
+        justify-content: flex-end;
+      }
+
+      .message.agent {
+        justify-content: flex-start;
+      }
+
+      .bubble {
+        max-width: min(690px, 86%);
+        padding: 13px 15px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--agent);
+        color: var(--ink);
+        font-size: 15px;
+        white-space: pre-wrap;
+        box-shadow: 0 8px 18px rgba(31, 42, 36, 0.04);
+      }
+
+      .message.user .bubble {
+        border-color: #cbdcc8;
+        background: var(--user);
+      }
+
+      .start-area {
+        display: grid;
+        justify-items: center;
+        gap: 10px;
+        padding: 2px 22px 26px;
+      }
+
+      .start-area.is-hidden,
+      .report-panel.is-hidden {
+        display: none;
+      }
+
+      .start-area p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .start-button,
+      .composer button {
+        min-height: 48px;
+        border-radius: var(--radius);
+        background: var(--accent);
+        color: #fff;
+        cursor: pointer;
+        font-weight: 700;
+        transition:
+          background 160ms ease,
+          transform 160ms ease,
+          box-shadow 160ms ease;
+      }
+
+      .start-button {
+        min-width: 180px;
+        padding: 0 26px;
+        font-size: 16px;
+        box-shadow: 0 14px 30px rgba(47, 95, 69, 0.22);
+      }
+
+      .start-button:hover,
+      .composer button:hover {
+        background: var(--accent-hover);
+        transform: translateY(-1px);
+      }
+
+      .ghost-button {
+        min-height: 38px;
+        padding: 0 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.62);
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.58;
+        transform: none;
+      }
+
+      .composer {
+        display: grid;
+        grid-template-columns: 1fr 104px;
+        gap: 12px;
+        padding: 18px 22px 22px;
+        border-top: 1px solid var(--line);
+        background: rgba(255, 253, 248, 0.72);
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 72px;
+        max-height: 190px;
+        resize: vertical;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 13px 14px;
+        outline: none;
+        background: #fff;
+        color: var(--ink);
+        font-size: 15px;
+        line-height: 1.65;
+      }
+
+      textarea:focus {
+        border-color: rgba(47, 95, 69, 0.58);
+        box-shadow: 0 0 0 4px rgba(47, 95, 69, 0.1);
+      }
+
+      textarea:disabled {
+        background: #f5f2eb;
+        color: var(--muted);
+      }
+
+      .report-panel {
+        margin-top: 22px;
+        overflow: hidden;
+      }
+
+      .report-header {
+        align-items: flex-start;
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      .report-content {
+        padding: 26px 30px 32px;
+        background: var(--paper-strong);
+        color: var(--ink);
+        font-size: 16px;
+        line-height: 1.85;
+        user-select: text;
+      }
+
+      .report-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .summary-card,
+      .report-block,
+      .dimension-card,
+      .feedback-panel {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: #fffdf8;
+      }
+
+      .summary-card {
+        padding: 14px;
+      }
+
+      .summary-card span,
+      .report-kicker {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+      }
+
+      .summary-card strong {
+        display: block;
+        margin-top: 5px;
+        font-size: 18px;
+        line-height: 1.35;
+      }
+
+      .report-block {
+        margin-top: 14px;
+        padding: 18px;
+      }
+
+      .report-block h3,
+      .report-details summary {
+        margin: 0 0 10px;
+        font-size: 18px;
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+      }
+
+      .report-block p {
+        margin: 0 0 10px;
+      }
+
+      .report-list {
+        margin: 0;
+        padding-left: 1.2em;
+      }
+
+      .report-list li + li {
+        margin-top: 6px;
+      }
+
+      .dimension-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .strength-chart {
+        display: grid;
+        gap: 16px;
+        margin-top: 14px;
+      }
+
+      .axis-row {
+        display: grid;
+        grid-template-columns: 88px 1fr 120px;
+        gap: 14px;
+        align-items: center;
+      }
+
+      .axis-title {
+        display: grid;
+        gap: 2px;
+      }
+
+      .axis-title strong {
+        font-size: 15px;
+        line-height: 1.25;
+      }
+
+      .axis-title span,
+      .axis-note {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .axis-wrap {
+        display: grid;
+        gap: 7px;
+      }
+
+      .axis-labels {
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .axis-track {
+        position: relative;
+        height: 28px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background:
+          linear-gradient(90deg, rgba(47, 95, 69, 0.06), rgba(47, 95, 69, 0.02) 50%, rgba(47, 95, 69, 0.06)),
+          #fff;
+        overflow: hidden;
+      }
+
+      .axis-track::before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 1px;
+        background: rgba(31, 42, 36, 0.22);
+        content: "";
+      }
+
+      .axis-band {
+        position: absolute;
+        top: 4px;
+        bottom: 4px;
+        left: var(--band-left);
+        width: var(--band-width);
+        border-radius: 999px;
+        background: rgba(47, 95, 69, 0.82);
+        box-shadow: 0 4px 12px rgba(47, 95, 69, 0.2);
+      }
+
+      .axis-row.is-variable .axis-band {
+        background: rgba(137, 92, 37, 0.78);
+        box-shadow: 0 4px 12px rgba(137, 92, 37, 0.18);
+      }
+
+      .axis-row.is-unclear .axis-band {
+        background: rgba(102, 113, 106, 0.45);
+        box-shadow: none;
+      }
+
+      .axis-strategy {
+        position: absolute;
+        top: 2px;
+        bottom: 2px;
+        left: var(--strategy-left);
+        width: 2px;
+        border-radius: 999px;
+        background: #1f2a24;
+        transform: translateX(-1px);
+      }
+
+      .axis-score {
+        justify-self: end;
+        min-width: 82px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: #edf3e9;
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .axis-row.is-variable .axis-score {
+        background: #f5ece2;
+        color: #895c25;
+      }
+
+      .axis-row.is-unclear .axis-score {
+        background: #efede8;
+        color: var(--muted);
+      }
+
+      .axis-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .legend-swatch {
+        display: inline-block;
+        width: 22px;
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(47, 95, 69, 0.82);
+      }
+
+      .legend-line {
+        display: inline-block;
+        width: 2px;
+        height: 16px;
+        border-radius: 999px;
+        background: #1f2a24;
+      }
+
+      .dimension-card {
+        padding: 14px;
+      }
+
+      .dimension-card h4 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+
+      .dimension-card p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 4px 9px;
+        border-radius: 999px;
+        background: #edf3e9;
+        color: #2f5f45;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .tag.is-variable {
+        background: #f5ece2;
+        color: #895c25;
+      }
+
+      .report-details {
+        margin-top: 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: #fffdf8;
+      }
+
+      .report-details summary {
+        margin: 0;
+        padding: 15px 18px;
+        cursor: pointer;
+        list-style-position: inside;
+      }
+
+      .report-details-body {
+        padding: 0 18px 18px;
+      }
+
+      .feedback-panel {
+        margin: 0 30px 30px;
+        padding: 18px;
+        background: #fbf7ef;
+      }
+
+      .feedback-panel h3 {
+        margin: 0 0 6px;
+        font-size: 18px;
+      }
+
+      .feedback-panel p {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .feedback-form {
+        display: grid;
+        gap: 14px;
+      }
+
+      .rating-group {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .rating-option {
+        position: relative;
+      }
+
+      .rating-option input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .rating-option span {
+        display: grid;
+        min-height: 58px;
+        place-items: center;
+        padding: 8px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: #fff;
+        color: var(--ink);
+        cursor: pointer;
+        font-size: 13px;
+        line-height: 1.35;
+        text-align: center;
+        transition:
+          border-color 160ms ease,
+          background 160ms ease,
+          box-shadow 160ms ease,
+          transform 160ms ease;
+      }
+
+      .rating-option strong {
+        display: block;
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      .rating-option input:checked + span {
+        border-color: rgba(47, 95, 69, 0.7);
+        background: #edf3e9;
+        box-shadow: 0 8px 20px rgba(47, 95, 69, 0.12);
+        color: var(--accent);
+        transform: translateY(-1px);
+      }
+
+      .feedback-field {
+        display: grid;
+        gap: 6px;
+      }
+
+      .feedback-field label,
+      .rating-label {
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .feedback-field small,
+      .rating-help {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .feedback-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .feedback-submit {
+        min-height: 42px;
+        padding: 0 18px;
+        border-radius: var(--radius);
+        background: var(--accent);
+        color: #fff;
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      .feedback-result {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      .feedback-result.is-valid {
+        color: var(--accent);
+      }
+
+      .feedback-result.is-invalid {
+        color: var(--danger);
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      @media (max-width: 720px) {
+        .page-shell {
+          width: min(100vw - 20px, 100%);
+          padding: 24px 0 34px;
+        }
+
+        .hero {
+          text-align: left;
+          padding: 0 4px;
+        }
+
+        .card-header,
+        .report-header {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 18px;
+        }
+
+        .messages {
+          max-height: none;
+          min-height: 340px;
+          padding: 18px 16px 6px;
+        }
+
+        .bubble {
+          max-width: 92%;
+        }
+
+        .composer {
+          grid-template-columns: 1fr;
+          padding: 16px;
+        }
+
+        .report-content {
+          padding: 22px 18px 26px;
+        }
+
+        .report-summary-grid,
+        .dimension-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .axis-row {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
+        .axis-score {
+          justify-self: start;
+        }
+
+        .feedback-panel {
+          margin: 0 18px 24px;
+        }
+
+        .rating-group {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="hero" aria-label="产品介绍">
+        <p class="eyebrow">对话式性格倾向探索</p>
+        <h1>MBTI 对话式测评</h1>
+        <p class="subtitle">
+          通过 4 个情境问题，识别你的第一反应、自然偏好、内在成本和外显策略。请像聊天一样回答，越接近真实经历越好。
+        </p>
+      </header>
+
+      <section class="experience-card" aria-label="测评对话">
+        <div class="card-header">
+          <div>
+            <h2>开始一轮测评</h2>
+            <p>每次只会出现一个问题，必要时会追问一次来补足关键线索。</p>
+          </div>
+          <button id="restartButton" class="ghost-button" type="button">重新开始</button>
+        </div>
+
+        <div id="messages" class="messages" aria-live="polite"></div>
+
+        <div id="startArea" class="start-area">
+          <button id="startButton" class="start-button" type="button">开始测评</button>
+          <p>大约 3-5 分钟完成。</p>
+        </div>
+
+        <form id="chatForm" class="composer">
+          <label class="sr-only" for="messageInput">输入你的回答</label>
+          <textarea id="messageInput" rows="3" placeholder="请在这里输入你的回答" autocomplete="off"></textarea>
+          <button id="sendButton" type="submit">发送</button>
+        </form>
+      </section>
+
+      <section id="reportPanel" class="report-panel is-hidden" aria-label="测评结果">
+        <div class="report-header">
+          <div>
+            <p class="eyebrow">你的测评结果</p>
+            <h2>自然偏好分析报告</h2>
+          </div>
+          <button id="copyReportButton" class="ghost-button" type="button">复制报告</button>
+        </div>
+        <article id="reportContent" class="report-content"></article>
+        <section id="feedbackPanel" class="feedback-panel" aria-label="反馈入口">
+          <h3>这份结果对你准确吗？</h3>
+          <p>先给这份结果打分，后面两栏按你的真实感受自由填写。你写什么都可以，系统会在后台判断这条反馈适合怎样使用。</p>
+          <form id="feedbackForm" class="feedback-form">
+            <div>
+              <div class="rating-label">结果价值评分</div>
+              <p class="rating-help">5 分 = 结果很有价值和参考性；1 分 = 基本没有参考价值。</p>
+              <div class="rating-group" role="radiogroup" aria-label="结果价值评分">
+                <label class="rating-option"><input type="radio" name="feedbackRating" value="5" /><span><strong>5</strong>很有价值</span></label>
+                <label class="rating-option"><input type="radio" name="feedbackRating" value="4" /><span><strong>4</strong>比较有参考</span></label>
+                <label class="rating-option"><input type="radio" name="feedbackRating" value="3" /><span><strong>3</strong>部分有参考</span></label>
+                <label class="rating-option"><input type="radio" name="feedbackRating" value="2" /><span><strong>2</strong>参考性较弱</span></label>
+                <label class="rating-option"><input type="radio" name="feedbackRating" value="1" /><span><strong>1</strong>基本不准</span></label>
+              </div>
+            </div>
+            <div class="feedback-field">
+              <label for="feedbackAgreeInput">哪些地方与你的自我认知一致？</label>
+              <small>可以很短，也可以很具体；比如“都一致”“TF比较准”“JP说中了”。</small>
+              <textarea id="feedbackAgreeInput" rows="3" placeholder="按你的真实感受写就可以。"></textarea>
+            </div>
+            <div class="feedback-field">
+              <label for="feedbackDisagreeInput">哪些地方你认为不准确？</label>
+              <small>如果没有，也可以写“没有”“暂无”；如果有，按你自己的话写就行。</small>
+              <textarea id="feedbackDisagreeInput" rows="3" placeholder="按你的真实感受写就可以。"></textarea>
+            </div>
+            <div class="feedback-actions">
+              <button id="feedbackSubmitButton" class="feedback-submit" type="submit">提交反馈</button>
+              <p id="feedbackResult" class="feedback-result" aria-live="polite"></p>
+            </div>
+          </form>
+        </section>
+      </section>
+    </main>
+
+    <script type="text/plain" id="legacy-engine">
+      const DIMENSION_ORDER = ["EI", "SN", "TF", "JP"];
+      const DIMENSION_META = {
+        EI: { name: "能量来源", left: "E", right: "I", leftLabel: "外部互动", rightLabel: "独处恢复" },
+        SN: { name: "信息偏好", left: "S", right: "N", leftLabel: "具体步骤", rightLabel: "整体框架" },
+        TF: { name: "决策权重", left: "T", right: "F", leftLabel: "原则逻辑", rightLabel: "关系感受" },
+        JP: { name: "行动组织", left: "J", right: "P", leftLabel: "先定计划", rightLabel: "保留弹性" },
+      };
+
+      const TYPE_NAMES = {
+        ISTJ: "物流师型", ISFJ: "守卫者型", INFJ: "提倡者型", INTJ: "建筑师型",
+        ISTP: "鉴赏家型", ISFP: "探险家型", INFP: "调停者型", INTP: "思考者型",
+        ESTP: "企业家型", ESFP: "表演者型", ENFP: "竞选者型", ENTP: "辩论者型",
+        ESTJ: "总经理型", ESFJ: "执政官型", ENFJ: "主人公型", ENTJ: "指挥官型",
+      };
+
+      const QUESTIONS = {
+        EI: "假设你有一个完整的周末或小长假，没有任何必须做的事，你一般会怎么安排这段时间？能想到平时比较多的情况就行。",
+        SN: "如果要你快速学一个完全陌生的东西，比如一个新软件、一道新菜、一门完全没基础的课，你通常会怎么开始？能举一个你印象比较深的情况。",
+        TF: "如果有个人找你帮忙，或者请你做一件你觉得不太合理、或者会占用你时间的事，你通常会怎么处理？能举一个你印象比较深的情况。",
+        JP: "假设你要去一个从没去过的地方玩两天，或者要操办一件对你来说挺重要的事，你一般会怎么准备和推进？能举一个你印象比较深的情况。",
+      };
+
+      const FOLLOWUPS = {
+        EI: "这样安排完之后，你通常感觉怎么样？是更放松、更有能量，还是反而有点累、需要一个人静静才能恢复？",
+        SN: "你当时第一步具体做了什么？是先找教程步骤，还是先找原理？按你大多数时候的习惯来说。",
+        TF: "当时你内心更纠结的是什么？是觉得不符合你的原则或安排，还是更担心拒绝后会让对方不高兴、或者影响你们的关系？按你大多数时候的反应来说。",
+        JP: "后来如果有临时变化，比如原本订好的地方、时间、方式要调整，你通常会怎么反应？按你大多数时候的情况来说，是会想赶紧重新安排好，还是觉得无所谓、顺着走就行？",
+      };
+
+      const LEFT_KEYWORDS = {
+        EI: ["找人", "约", "朋友", "热闹", "聚会", "聊天", "出去", "大家", "社交", "一起", "有人", "更有能量", "不闷"],
+        SN: ["教程", "步骤", "说明书", "照着", "视频", "怎么做", "细节", "按顺序", "第一步", "具体"],
+        TF: ["原则", "不合理", "客观", "对事不对人", "事实", "应该", "正当", "直接拒绝", "说明原因", "边界"],
+        JP: ["计划", "安排", "提前", "订好", "不安心", "焦虑", "重新安排", "赶紧", "清单", "确定"],
+      };
+
+      const RIGHT_KEYWORDS = {
+        EI: ["一个人", "独处", "安静", "在家", "看书", "静静", "累", "恢复", "充电", "消耗", "不想见人"],
+        SN: ["原理", "整体", "框架", "底层逻辑", "为什么", "结构", "关联", "模式", "先了解", "逻辑"],
+        TF: ["关系", "感受", "不好意思", "开不了口", "担心", "怕伤", "难受", "委婉", "对方不高兴", "尴尬"],
+        JP: ["无所谓", "边走边看", "弹性", "临时", "不急", "顺着走", "随机", "开放", "变化", "自由"],
+      };
+
+      const AMBIGUOUS_WORDS = ["都有", "都可以", "看情况", "不一定", "说不准", "一半一半", "不好说", "不确定", "看状态"];
+      const CONTEXT_WORDS = ["看人", "看关系", "看状态", "看内容", "看事情", "看重要", "工作", "生活", "不同场景", "不同情况"];
+      const REFUSAL_WORDS = ["不想说", "不想补充", "不用补充", "已经回答", "不知道", "不记得", "算了", "跳过"];
+      const L4_WORDS = ["总是", "每次", "必须", "受不了", "一定", "完全", "几乎", "长期", "大多数", "基本每次", "从来"];
+      const L3_WORDS = ["上次", "最近", "比如", "具体", "先", "然后", "后来", "通常会", "我会", "一般会", "实际"];
+      const L2_WORDS = ["喜欢", "倾向", "一般", "比较", "想", "觉得", "可能", "偏"];
+      const L1_WORDS = ["外向", "内向", "理性", "感性", "随性", "自律", "拖延", "我是"];
+      const ENERGY_WORDS = ["能量", "精力", "放松", "更有劲", "更有能量", "累", "恢复", "充电", "消耗", "舒服"];
+      const CHANGE_WORDS = ["变化", "临时", "调整", "改", "重新安排", "顺着走", "计划赶不上"];
+      const WEIGHT_WORDS = ["纠结", "担心", "原则", "关系", "不合理", "对方", "拒绝", "理由", "开不了口"];
+      const FIRST_STEP_WORDS = ["先", "第一步", "开始", "上来", "教程", "步骤", "原理", "框架"];
+
+      const messagesEl = document.getElementById("messages");
+      const formEl = document.getElementById("chatForm");
+      const inputEl = document.getElementById("messageInput");
+      const sendButtonEl = document.getElementById("sendButton");
+      const startButtonEl = document.getElementById("startButton");
+      const startAreaEl = document.getElementById("startArea");
+      const restartButtonEl = document.getElementById("restartButton");
+      const reportPanelEl = document.getElementById("reportPanel");
+      const reportContentEl = document.getElementById("reportContent");
+      const copyReportButtonEl = document.getElementById("copyReportButton");
+
+      let state;
+
+      function reset() {
+        state = {
+          started: false,
+          status: "ready",
+          index: 0,
+          results: {},
+          followups: {},
+          pendingResult: null,
+          completed: false,
+        };
+        messagesEl.innerHTML = "";
+        reportContentEl.textContent = "";
+        reportPanelEl.classList.add("is-hidden");
+        startAreaEl.classList.remove("is-hidden");
+        inputEl.value = "";
+        inputEl.disabled = true;
+        inputEl.placeholder = "点击“开始测评”后开始回答";
+        sendButtonEl.disabled = true;
+        appendMessage("agent", "欢迎来到心灵空间。\n\n我会通过 4 个情境问题帮你更好地了解自己。这不是诊断，只是自我探索，你可以随时退出。\n\n准备好了就开始。");
+      }
+
+      function start() {
+        state.started = true;
+        state.status = "waiting_answer";
+        startAreaEl.classList.add("is-hidden");
+        appendMessage("user", "开始测评");
+        appendMessage("agent", QUESTIONS[currentDimension()]);
+        inputEl.disabled = false;
+        sendButtonEl.disabled = false;
+        inputEl.placeholder = "请结合真实经历回答，可以直接说“看情况”或举一个例子";
+        inputEl.focus();
+      }
+
+      function handleUserMessage(message) {
+        const text = message.trim();
+        if (!text || state.completed) return;
+
+        appendMessage("user", text);
+        inputEl.value = "";
+        resizeInput();
+
+        if (isExit(text)) {
+          appendMessage("agent", "好的，尊重你的选择。以后想继续探索，随时可以回来。");
+          inputEl.disabled = true;
+          sendButtonEl.disabled = true;
+          return;
+        }
+
+        if (state.status === "waiting_answer") {
+          handleMainAnswer(text);
+          return;
+        }
+
+        if (state.status === "waiting_followup") {
+          handleFollowupAnswer(text);
+        }
+      }
+
+      function handleMainAnswer(text) {
+        const dimension = currentDimension();
+        const result = scoreAnswer(dimension, text, "main", false);
+        if (result.needsFollowup && !state.followups[dimension]) {
+          state.status = "waiting_followup";
+          state.pendingResult = result;
+          state.followups[dimension] = 1;
+          appendMessage("agent", FOLLOWUPS[dimension]);
+          return;
+        }
+        completeDimension(result);
+      }
+
+      function handleFollowupAnswer(text) {
+        const dimension = currentDimension();
+        let result = scoreAnswer(dimension, text, "followup", true);
+        if (state.pendingResult) {
+          result = mergePendingContext(state.pendingResult, result);
+        }
+        state.pendingResult = null;
+        completeDimension(result);
+      }
+
+      function completeDimension(result) {
+        state.results[result.dimension] = result;
+        const nextIndex = state.index + 1;
+        if (nextIndex < DIMENSION_ORDER.length) {
+          state.index = nextIndex;
+          state.status = "waiting_answer";
+          appendMessage("agent", "了解，我们看下一个情境。\n\n" + QUESTIONS[currentDimension()]);
+          return;
+        }
+
+        state.completed = true;
+        state.status = "completed";
+        const report = buildReport(state.results);
+        appendMessage("agent", "测评完成，我把结果整理在下方。");
+        reportContentEl.textContent = report;
+        reportPanelEl.classList.remove("is-hidden");
+        inputEl.disabled = true;
+        sendButtonEl.disabled = true;
+        inputEl.placeholder = "测评已完成，可以复制下方报告，或重新开始。";
+        reportPanelEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function scoreAnswer(dimension, answer, phase, followupUsed) {
+        const text = answer.trim();
+        const leftHits = keywordHits(text, LEFT_KEYWORDS[dimension]);
+        const rightHits = keywordHits(text, RIGHT_KEYWORDS[dimension]);
+        const ambiguous = containsAny(text, AMBIGUOUS_WORDS);
+        const contextDependency = containsAny(text, CONTEXT_WORDS);
+        const refused = containsAny(text, REFUSAL_WORDS);
+        const evidence = detectEvidenceLevel(text, leftHits + rightHits);
+
+        if (refused) {
+          return buildResult(dimension, 5, evidence, 0.35, false, followupUsed, contextDependency, true, "你这次没有继续补充细节，所以我会先把这一维保持在比较保守的位置。");
+        }
+
+        const [dominantSide, dominance] = decideSide(leftHits, rightHits);
+        let needsFollowup = false;
+        let insufficient = false;
+        let score = 5;
+        let confidence = 0.35;
+
+        if (phase === "main") {
+          needsFollowup = shouldFollowup(dimension, text, evidence, ambiguous, contextDependency, dominance);
+        }
+
+        if (ambiguous && dominance <= 1) {
+          score = 5;
+          confidence = evidence === "L1" || evidence === "L2" ? 0.35 : 0.45;
+          insufficient = evidence === "L1" || evidence === "L2";
+        } else if (dominantSide === "left") {
+          [score, confidence] = scoreForSide("left", evidence, contextDependency);
+        } else if (dominantSide === "right") {
+          [score, confidence] = scoreForSide("right", evidence, contextDependency);
+        } else {
+          score = 5;
+          confidence = 0.35;
+          insufficient = true;
+        }
+
+        if (phase === "followup" && (evidence === "L1" || evidence === "L2") && dominance <= 1) {
+          score = 5;
+          confidence = 0.35;
+          insufficient = true;
+          needsFollowup = false;
+        }
+
+        const reason = buildUserReason(dimension, score, text, ambiguous, contextDependency);
+        return buildResult(dimension, score, evidence, confidence, needsFollowup, followupUsed, contextDependency, insufficient, reason);
+      }
+
+      function keywordHits(text, keywords) {
+        return keywords.reduce((count, keyword) => count + (text.includes(keyword) ? 1 : 0), 0);
+      }
+
+      function containsAny(text, keywords) {
+        return keywords.some((keyword) => text.includes(keyword));
+      }
+
+      function detectEvidenceLevel(text, directionalHits) {
+        if (directionalHits === 0 && !containsAny(text, L1_WORDS.concat(L2_WORDS))) return "L1";
+        if (containsAny(text, L4_WORDS) && directionalHits > 0) return "L4";
+        if (containsAny(text, L3_WORDS) && directionalHits > 0) return "L3";
+        if (containsAny(text, L2_WORDS) || directionalHits > 0) return "L2";
+        return "L1";
+      }
+
+      function decideSide(leftHits, rightHits) {
+        if (leftHits > rightHits) return ["left", leftHits - rightHits];
+        if (rightHits > leftHits) return ["right", rightHits - leftHits];
+        return ["neutral", 0];
+      }
+
+      function shouldFollowup(dimension, text, evidence, ambiguous, contextDependency, dominance) {
+        if (ambiguous || contextDependency) return true;
+        if (dominance === 0) return true;
+        if (dimension === "EI" && !containsAny(text, ENERGY_WORDS)) return true;
+        if (dimension === "SN" && !containsAny(text, FIRST_STEP_WORDS)) return true;
+        if (dimension === "TF" && text.includes("纠结") && !containsAny(text, WEIGHT_WORDS)) return true;
+        if (dimension === "JP" && !containsAny(text, CHANGE_WORDS)) return true;
+        return evidence === "L1";
+      }
+
+      function scoreForSide(side, evidence, contextDependency) {
+        if (contextDependency) return side === "left" ? [4, 0.48] : [7, 0.48];
+        if (evidence === "L4") return side === "left" ? [2, 0.78] : [9, 0.78];
+        if (evidence === "L3") return side === "left" ? [3, 0.62] : [8, 0.62];
+        if (evidence === "L2") return side === "left" ? [4, 0.45] : [7, 0.45];
+        return [5, 0.35];
+      }
+
+      function buildResult(dimension, score, evidence, confidence, needsFollowup, followupUsed, contextDependency, insufficient, reason) {
+        const meta = DIMENSION_META[dimension];
+        return {
+          dimension,
+          score,
+          evidence,
+          confidence,
+          needsFollowup,
+          followupUsed,
+          contextDependency,
+          insufficient,
+          direction: score <= 5 ? meta.left : meta.right,
+          reason,
+        };
+      }
+
+      function buildUserReason(dimension, score, answer, ambiguous, contextDependency) {
+        const meta = DIMENSION_META[dimension];
+        const directionLabel = score <= 5 ? meta.leftLabel : meta.rightLabel;
+        if (ambiguous) return `你的回答里同时出现了两边的可能，我会先把 ${meta.name} 看作比较灵活。`;
+        if (contextDependency) return `你的回答明显受具体情境影响，所以 ${meta.name} 会保守看待，避免直接推成强倾向。`;
+        return `你提到“${compactAnswer(answer)}”，这更接近${directionLabel}这一侧。`;
+      }
+
+      function mergePendingContext(pending, followup) {
+        followup.contextDependency = followup.contextDependency || pending.contextDependency;
+        if (followup.insufficient && !pending.insufficient) {
+          followup.reason = "你后续补充仍然比较保留，所以我会结合前面的回答，把这一维放在较灵活的位置。";
+        }
+        return followup;
+      }
+
+      function buildReport(resultsMap) {
+        const results = DIMENSION_ORDER.map((key) => resultsMap[key]);
+        const typeCode = results.map((item) => item.direction).join("");
+        const layer = decideLayer(results);
+        if (layer === "high") return renderHighReport(typeCode, results);
+        if (layer === "medium") return renderMediumReport(typeCode, results);
+        return renderLowReport(typeCode, results);
+      }
+
+      function decideLayer(results) {
+        const strongCount = results.filter((item) => item.score <= 3 || item.score >= 8).length;
+        const neutralCount = results.filter((item) => item.score >= 4 && item.score <= 6).length;
+        const contextCount = results.filter((item) => item.contextDependency).length;
+        const insufficientCount = results.filter((item) => item.insufficient || item.evidence === "L1" || item.evidence === "L2" || item.confidence <= 0.45).length;
+        const averageConfidence = results.reduce((sum, item) => sum + item.confidence, 0) / results.length;
+
+        if (strongCount >= 3 && neutralCount <= 1 && contextCount === 0 && insufficientCount <= 1 && averageConfidence >= 0.65) return "high";
+        if (strongCount <= 1 || neutralCount >= 3 || contextCount >= 2 || insufficientCount >= 3 || averageConfidence <= 0.45) return "low";
+        return "medium";
+      }
+
+      function renderHighReport(typeCode, results) {
+        return [
+          "你的 MBTI 倾向分析",
+          "",
+          `类型结论：倾向于 ${typeCode}（${TYPE_NAMES[typeCode] || "参考方向"}）`,
+          "倾向强度：这次回答里的行为依据比较清楚，结果可以作为一个较稳定的参考。",
+          "",
+          "四维倾向：",
+          ...dimensionLines(results),
+          "",
+          "为什么这样判断：",
+          ...reasonLines(results),
+          "",
+          "可能的表现：",
+          buildDimensionBasedProfile(results),
+          "",
+          "沟通与协作建议：",
+          buildCollaborationAdvice(results),
+          "",
+          "需要留意的边界：",
+          "这不是结论，也不是对你的固定标签。它只是基于这次对话里具体行为线索得到的倾向分析。",
+          "",
+          "如果你愿意，可以回复你觉得准或不准的地方，我可以帮你继续校准。",
+        ].join("\n");
+      }
+
+      function renderMediumReport(typeCode, results) {
+        const stable = stableDimensions(results);
+        const flexible = flexibleDimensions(results);
+        const adjacent = adjacentTypes(typeCode, results);
+        return [
+          "你的 MBTI 倾向分析",
+          "",
+          `类型结论（参考方向）：${typeCode}（${TYPE_NAMES[typeCode] || "参考方向"}）`,
+          "说明：你的结果里有一些倾向比较清楚，也有部分维度会受场景影响，所以更适合作为参考方向。",
+          "",
+          "四维倾向：",
+          ...dimensionLines(results),
+          "",
+          `相对稳定的部分：${stable || "这次没有特别稳定的维度，需要继续观察。"}`,
+          `可能切换的部分：${flexible || "这次没有明显切换维度。"}`,
+          "",
+          `相邻类型提示：${adjacent || "目前没有特别需要提示的相邻方向。"}`,
+          "",
+          "简要说明：",
+          "这份结果主要反映你在本次回答中呈现出的行为线索。清楚的维度可以参考，灵活的维度建议继续观察最近几次真实场景里的反应。",
+          "",
+          "建议把这次结果当作探索入口，而不是固定答案。",
+          "",
+          "如果你愿意，可以回复你觉得准或不准的地方，我可以帮你继续校准。",
+        ].join("\n");
+      }
+
+      function renderLowReport(typeCode, results) {
+        const unclear = results
+          .filter((item) => item.contextDependency || item.insufficient || (item.score >= 4 && item.score <= 6))
+          .map((item) => item.dimension)
+          .join("、");
+        const adjacent = adjacentTypes(typeCode, results);
+        return [
+          "当前倾向（参考方向）",
+          "",
+          `基于本次对话，目前只能暂时看作接近 ${typeCode} 方向。`,
+          "不过你的多个回答仍然比较灵活，或明显依赖具体情境，现在不适合输出完整人格画像。",
+          "",
+          "四维倾向：",
+          ...dimensionLines(results),
+          "",
+          `不稳定维度：${unclear || "暂无明显不稳定维度，但整体信息仍偏少。"}`,
+          `相邻方向：${adjacent || "需要更多具体行为后再判断。"}`,
+          "",
+          "目前阶段，建议把这次测评当作一个思考入口。人会在不同关系、任务和状态下呈现不同面向，这本身并不矛盾。",
+          "",
+          "如果你愿意，可以回复你觉得准或不准的地方，我可以帮你继续校准。",
+        ].join("\n");
+      }
+
+      function dimensionLines(results) {
+        return results.map((item) => {
+          const meta = DIMENSION_META[item.dimension];
+          return `- ${item.dimension}（${meta.name}）：${directionLabel(item)}，${strengthLabel(item)}`;
+        });
+      }
+
+      function reasonLines(results) {
+        return results.map((item) => `- ${DIMENSION_META[item.dimension].name}：${item.reason}`);
+      }
+
+      function directionLabel(item) {
+        const meta = DIMENSION_META[item.dimension];
+        return item.direction === meta.left ? `更接近${meta.leftLabel}` : `更接近${meta.rightLabel}`;
+      }
+
+      function strengthLabel(item) {
+        if (item.contextDependency) return "会受具体情境影响";
+        if (item.score >= 4 && item.score <= 6) return "比较灵活";
+        if (item.score <= 3 || item.score >= 8) return "在多数场景下较稳定";
+        return "有一定倾向，但保留弹性";
+      }
+
+      function stableDimensions(results) {
+        return results
+          .filter((item) => (item.score <= 3 || item.score >= 8) && !item.contextDependency)
+          .map((item) => `${item.dimension}（${DIMENSION_META[item.dimension].name}）`)
+          .join("、");
+      }
+
+      function flexibleDimensions(results) {
+        return results
+          .filter((item) => (item.score >= 4 && item.score <= 6) || item.contextDependency || item.insufficient)
+          .map((item) => `${item.dimension}（${DIMENSION_META[item.dimension].name}）`)
+          .join("、");
+      }
+
+      function adjacentTypes(typeCode, results) {
+        const candidates = results
+          .map((item, index) => ({ item, index, distance: Math.abs(item.score - 5.5) }))
+          .filter(({ item }) => (item.score >= 4 && item.score <= 7) || item.contextDependency)
+          .sort((a, b) => a.distance - b.distance)
+          .slice(0, 2);
+        const adjacent = candidates.map(({ item, index }) => {
+          const letters = typeCode.split("");
+          const meta = DIMENSION_META[item.dimension];
+          letters[index] = letters[index] === meta.left ? meta.right : meta.left;
+          return letters.join("");
+        });
+        return [...new Set(adjacent)].join(" 或 ");
+      }
+
+      function buildDimensionBasedProfile(results) {
+        return results.map((item) => `${DIMENSION_META[item.dimension].name}上，你更常呈现${directionLabel(item)}。`).join("");
+      }
+
+      function buildCollaborationAdvice(results) {
+        const flexible = flexibleDimensions(results);
+        if (flexible) return `和别人协作时，建议先说明你在 ${flexible} 上可能会随场景调整，这能减少对方把你误读成前后不一致。`;
+        return "和别人协作时，可以把你较稳定的偏好提前说明，让对方知道你通常如何恢复能量、理解信息、做决定和推进事情。";
+      }
+
+      function currentDimension() {
+        return DIMENSION_ORDER[state.index];
+      }
+
+      function isExit(text) {
+        return ["退出", "不想做", "不做了", "算了", "停止", "结束"].some((word) => text.includes(word));
+      }
+
+      function compactAnswer(answer) {
+        const cleaned = answer.replace(/\s+/g, " ").trim();
+        return cleaned.length <= 34 ? cleaned : cleaned.slice(0, 32) + "...";
+      }
+
+      function appendMessage(role, content) {
+        const wrapper = document.createElement("div");
+        wrapper.className = `message ${role === "user" ? "user" : "agent"}`;
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.textContent = content;
+        wrapper.appendChild(bubble);
+        messagesEl.appendChild(wrapper);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+
+      function resizeInput() {
+        inputEl.style.height = "auto";
+        inputEl.style.height = `${Math.min(inputEl.scrollHeight, 190)}px`;
+      }
+
+      async function copyReport() {
+        const text = reportContentEl.textContent.trim();
+        if (!text) return;
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const helper = document.createElement("textarea");
+          helper.value = text;
+          helper.setAttribute("readonly", "");
+          helper.style.position = "fixed";
+          helper.style.opacity = "0";
+          document.body.appendChild(helper);
+          helper.select();
+          document.execCommand("copy");
+          document.body.removeChild(helper);
+        }
+        copyReportButtonEl.textContent = "已复制";
+        setTimeout(() => (copyReportButtonEl.textContent = "复制报告"), 1400);
+      }
+
+      startButtonEl.addEventListener("click", start);
+      restartButtonEl.addEventListener("click", reset);
+      copyReportButtonEl.addEventListener("click", copyReport);
+      inputEl.addEventListener("input", resizeInput);
+      inputEl.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          formEl.requestSubmit();
+        }
+      });
+      formEl.addEventListener("submit", (event) => {
+        event.preventDefault();
+        handleUserMessage(inputEl.value);
+      });
+
+      reset();
+    </script>
+    <script src="./mbti_experience_v2.js?v=20260621i"></script>
+  </body>
+</html>
