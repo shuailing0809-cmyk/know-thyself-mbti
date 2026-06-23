@@ -654,17 +654,28 @@
       .feedback-actions {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
         gap: 12px;
       }
 
-      .feedback-submit {
+      .feedback-submit,
+      .feedback-copy {
         min-height: 42px;
         padding: 0 18px;
         border-radius: var(--radius);
-        background: var(--accent);
-        color: #fff;
         cursor: pointer;
         font-weight: 700;
+      }
+
+      .feedback-submit {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .feedback-copy {
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--ink);
       }
 
       .feedback-result {
@@ -678,6 +689,10 @@
 
       .feedback-result.is-invalid {
         color: var(--danger);
+      }
+
+      .feedback-result.is-syncing {
+        color: var(--muted);
       }
 
       .sr-only {
@@ -838,6 +853,7 @@
             </div>
             <div class="feedback-actions">
               <button id="feedbackSubmitButton" class="feedback-submit" type="submit">提交反馈</button>
+              <button id="feedbackCopyButton" class="feedback-copy" type="button" hidden>复制反馈内容</button>
               <p id="feedbackResult" class="feedback-result" aria-live="polite"></p>
             </div>
           </form>
