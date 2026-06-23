@@ -324,7 +324,7 @@ const SIDE_KEYWORDS = {
     right: ["一个人", "独处", "安静", "自己待", "在家", "不说话", "静静", "恢复", "充电", "消耗", "不想见人", "社交累", "自己消化"],
   },
   SN: {
-    left: ["步骤", "教程", "说明书", "示例", "例子", "照着", "具体", "细节", "先做", "上手", "操作", "第一步", "实操", "案例"],
+    left: ["步骤", "说明书", "示例", "例子", "照着", "具体", "细节", "先做", "上手", "操作", "第一步", "实操", "案例"],
     right: ["整体", "框架", "原理", "逻辑", "为什么", "结构", "底层", "模式", "关联", "意义", "概念", "全貌", "体系"],
   },
   TF: {
@@ -368,14 +368,15 @@ const NEGATION_PREFIXES = ["不", "没", "没有", "无需", "不用", "不需�
 
 const SEMANTIC_SIGNAL_RULES = {
   EI: [
-    { side: "left", target: "natural", weight: 3, tag: "social_recharge", negationSensitive: true, patterns: [/(找|约|见|联系|喊|叫|和|跟).{0,8}(朋友|同学|家人|同事|人|大家)/, /(聊天|聚会|吃饭|逛街|旅游|打游戏|出去玩).{0,8}(朋友|同学|家人|一起|人)/, /(说出来|聊完|互动).{0,8}(舒服|开心|有精神|恢复|放松|充电)/] },
+    { side: "left", target: "natural", weight: 3, tag: "social_recharge", negationSensitive: true, patterns: [/(找|约|见|联系|喊|叫|和|跟).{0,8}(朋友|同学|家人|同事|人|大家)/, /(聊天|聚会|吃饭|逛街|旅游|打游戏|出去玩).{0,8}(朋友|同学|家人|一起|人)/, /(说出来|聊完|互动).{0,8}(舒服|开心|有精神|恢复|放松|充电)/, /(朋友|同学|家人|同事|大家).{0,10}(一起|在一起|聊天|互动).{0,10}(好|很好|开心|舒服|放松|有意思|不无聊)/, /(和|跟).{0,6}(朋友|同学|家人|同事).{0,10}(一起|在一起).{0,10}(好|很好|开心|舒服|放松|有意思|不无聊)/] },
+    { side: "left", target: "natural", weight: 4, tag: "solitude_cost", patterns: [/(一个人|自己一个人|自己待|独处).{0,10}(无聊|闷|没意思|孤单|孤独|焦虑|难受|受不了)/, /(无聊|闷|没意思|孤单|孤独|焦虑|难受|受不了).{0,10}(一个人|自己一个人|自己待|独处)/] },
     { side: "left", target: "strategy", weight: 2, tag: "social_action", negationSensitive: true, patterns: [/(最后|通常|一般|会).{0,8}(约|找|见|聊|聚|出去)/, /(组织|参加).{0,8}(聚会|活动|饭局|旅游)/] },
     { side: "right", target: "natural", weight: 4, tag: "no_social_need", patterns: [/(不需要|不用|不想|不愿意|没必要|不必).{0,10}(和人|跟人|互动|聊天|社交|见人|别人|有人陪|人陪)/, /(不需要|不想).{0,8}(别人|有人|人).{0,6}(陪|打扰|互动)/] },
     { side: "right", target: "natural", weight: 3, tag: "solitude_recharge", patterns: [/(一个人|自己|独处|安静|静静).{0,10}(恢复|放松|舒服|充电|清净|思考|待着|呆着)/, /不想.{0,6}(见人|说话|社交|被打扰)/, /(社交|见人|聊天).{0,8}(累|消耗|疲惫|透支)/] },
     { side: "right", target: "strategy", weight: 2, tag: "solitude_action", patterns: [/(最后|通常|一般|会).{0,8}(一个人|自己待|在家|休息|睡觉|看视频|听音乐)/] },
   ],
   SN: [
-    { side: "left", target: "natural", weight: 3, tag: "step_entry", negationSensitive: true, patterns: [/(先|第一步|一开始|最开始).{0,10}(教程|步骤|示例|例子|说明|操作|模仿|照着|问会的人|看别人|展示|示范|演示)/, /(需要|想要|最好|更想).{0,10}(具体|步骤|例子|示例|案例|演示|展示|示范|人教|别人教|手把手|问别人|问会的人)/, /(只讲|光讲).{0,5}(原理|框架|概念).{0,8}(空|虚|卡|没用|不懂)/] },
+    { side: "left", target: "natural", weight: 3, tag: "step_entry", negationSensitive: true, patterns: [/(先|第一步|一开始|最开始).{0,10}(步骤|示例|例子|说明|操作|模仿|照着|问会的人|看别人|展示|示范|演示)/, /教程.{0,8}(步骤|操作|实操|演示|示范|照着|一步步)/, /(步骤|操作|实操|演示|示范|照着|一步步).{0,8}教程/, /(需要|想要|最好|更想).{0,10}(具体|步骤|例子|示例|案例|演示|展示|示范|人教|别人教|手把手|问别人|问会的人)/, /(只讲|光讲).{0,5}(原理|框架|概念).{0,8}(空|虚|卡|没用|不懂)/] },
     { side: "left", target: "strategy", weight: 2, tag: "step_action", patterns: [/(查|搜|找).{0,8}(教程|步骤|攻略|案例|示例|视频)/, /(照着|跟着|看着).{0,8}(做|操作|学|别人|展示|示范|演示)/, /(问|请教).{0,8}(别人|会的人|懂的人|老师|朋友)/, /(有人|别人).{0,8}(展示|示范|演示|教一下|带着做)/] },
     { side: "right", target: "natural", weight: 3, tag: "framework_entry", patterns: [/(先|第一步|一开始|最开始).{0,10}(整体|框架|原理|逻辑|结构|全貌|底层|为什么|体系)/, /(需要|想要|最好|更想).{0,8}(整体|框架|原理|逻辑|结构|全貌|体系)/, /(没有|缺少).{0,5}(框架|逻辑|结构|全貌|体系).{0,8}(乱|迷失|不舒服|卡|难受)/, /太多.{0,5}(细节|步骤).{0,8}(迷失|乱|烦|抓不到)/] },
     { side: "right", target: "strategy", weight: 2, tag: "framework_action", patterns: [/(搭|建立|理解|搞清).{0,8}(框架|结构|逻辑|原理|体系|全貌)/, /(从|看).{0,8}(整体|结构|底层|原理).{0,8}(入手|开始)/] },
@@ -413,10 +414,15 @@ const feedbackAgreeInputEl = document.getElementById("feedbackAgreeInput");
 const feedbackDisagreeInputEl = document.getElementById("feedbackDisagreeInput");
 const feedbackResultEl = document.getElementById("feedbackResult");
 const feedbackSubmitButtonEl = document.getElementById("feedbackSubmitButton");
+const feedbackCopyButtonEl = document.getElementById("feedbackCopyButton");
+
+const FEEDBACK_API_URL = window.MBTI_FEEDBACK_API_URL || "https://know-thyself-feedback.YOUR_WORKERS_SUBDOMAIN.workers.dev/api/feedback";
+const FEEDBACK_API_PLACEHOLDER = "YOUR_WORKERS_SUBDOMAIN";
 
 let state;
 let lastReportText = "";
 let lastReportModel = null;
+let feedbackFallbackRecord = null;
 
 function reset() {
   state = {
@@ -856,6 +862,10 @@ function buildReason(dimension, answer, naturalSide, strategySide, evidence, cos
 
   if (dimension === "JP" && naturalSide === "right" && hasJpPCostSignal(answer)) {
     return `你提到“${snippet}”。过度计划或被安排带来束缚感，这说明收拢确定本身有成本，因此更接近开放弹性（P）。`;
+  }
+
+  if (dimension === "EI" && naturalSide === "left" && signalPresent(evidence.semanticSignals || [], ["solitude_cost"])) {
+    return `你提到“${snippet}”。这里不能只抓“一个人”，因为你同时表达了独处会无聊或没意思；这更像恢复时能量会被互动激活，因此更接近靠近互动（E）。`;
   }
 
   if (naturalSide && strategySide && naturalSide !== strategySide) {
@@ -1531,9 +1541,9 @@ function summarizeSemanticEvidence(dimension, text, signals) {
   const hasConflict = hasLeftNatural && hasRightNatural && Math.abs(naturalScores.left - naturalScores.right) <= 3;
 
   return {
-    hasFirstReaction: containsAny(text, REACTION_MARKERS) || signalPresent(signals, ["social_recharge", "no_social_need", "solitude_recharge", "step_entry", "framework_entry", "principle_cost", "relationship_cost", "closure_need", "open_pace"]),
+    hasFirstReaction: containsAny(text, REACTION_MARKERS) || signalPresent(signals, ["social_recharge", "solitude_cost", "no_social_need", "solitude_recharge", "step_entry", "framework_entry", "principle_cost", "relationship_cost", "closure_need", "open_pace"]),
     hasNaturalPreference: naturalScores.left > 0 || naturalScores.right > 0,
-    hasInnerCost: signalPresent(signals, ["no_social_need", "solitude_recharge", "framework_entry", "step_entry", "principle_cost", "relationship_cost", "closure_need", "constraint_cost"]),
+    hasInnerCost: signalPresent(signals, ["solitude_cost", "no_social_need", "solitude_recharge", "framework_entry", "step_entry", "principle_cost", "relationship_cost", "closure_need", "constraint_cost"]),
     hasStrategy: strategyScores.left > 0 || strategyScores.right > 0,
     hasContext: containsAny(text, CONTEXT_WORDS) || containsAny(text, AMBIGUOUS_WORDS),
     hasConflict,
@@ -1774,19 +1784,19 @@ function resetFeedback() {
   feedbackFormEl.reset();
   feedbackAgreeInputEl.value = "";
   feedbackDisagreeInputEl.value = "";
-  feedbackResultEl.textContent = "";
-  feedbackResultEl.classList.remove("is-valid", "is-invalid");
+  setFeedbackResult("", "");
+  feedbackFallbackRecord = null;
+  if (feedbackCopyButtonEl) feedbackCopyButtonEl.hidden = true;
   if (feedbackSubmitButtonEl) feedbackSubmitButtonEl.disabled = false;
 }
 
-function handleFeedbackSubmit(event) {
+async function handleFeedbackSubmit(event) {
   event.preventDefault();
   const payload = collectFeedbackPayload();
   const evaluation = evaluateFeedback(payload);
 
-  feedbackResultEl.classList.remove("is-valid", "is-invalid");
-  feedbackResultEl.classList.add(evaluation.valid ? "is-valid" : "is-invalid");
-  feedbackResultEl.textContent = evaluation.message;
+  setFeedbackResult(evaluation.valid ? "is-valid" : "is-invalid", evaluation.message);
+  if (feedbackCopyButtonEl) feedbackCopyButtonEl.hidden = true;
 
   if (!evaluation.valid) return;
 
@@ -1802,9 +1812,21 @@ function handleFeedbackSubmit(event) {
     clarity: lastReportModel?.clarity || "",
     reportSummary: summarizeReportForFeedback(lastReportModel),
   };
+
   saveFeedbackRecord(record);
-  submitFeedbackRecord(record);
   feedbackSubmitButtonEl.disabled = true;
+  setFeedbackResult("is-syncing", "正在同步反馈...");
+
+  const syncResult = await submitFeedbackRecord(record);
+  if (syncResult.ok) {
+    setFeedbackResult("is-valid", feedbackSyncedMessage(payload.rating, evaluation.usefulness));
+    return;
+  }
+
+  feedbackFallbackRecord = record;
+  setFeedbackResult("is-invalid", feedbackSyncFailedMessage(syncResult.reason));
+  if (feedbackCopyButtonEl) feedbackCopyButtonEl.hidden = false;
+  feedbackSubmitButtonEl.disabled = false;
 }
 
 function collectFeedbackPayload() {
@@ -1878,6 +1900,30 @@ function feedbackAcceptedMessage(rating, usefulness) {
   return `已收到：${rating} 分反馈，会先作为满意度记录保存。`;
 }
 
+function feedbackSyncedMessage(rating, usefulness) {
+  if (usefulness === "high") {
+    return `已收到并同步保存：${rating} 分反馈，内容比较具体，会作为后续迭代的重要参考。`;
+  }
+  if (usefulness === "medium") {
+    return `已收到并同步保存：${rating} 分反馈，会作为后续观察和趋势判断的参考。`;
+  }
+  return `已收到并同步保存：${rating} 分反馈，会先作为满意度记录保存。`;
+}
+
+function feedbackSyncFailedMessage(reason) {
+  if (reason === "not_configured") {
+    return "反馈服务器还没有配置好，已先保存在本机。你也可以复制反馈内容发给我们。";
+  }
+  return "暂未同步到服务器，已保存在本机。你也可以复制反馈内容发给我们。";
+}
+
+function setFeedbackResult(className, message) {
+  if (!feedbackResultEl) return;
+  feedbackResultEl.textContent = message;
+  feedbackResultEl.classList.remove("is-valid", "is-invalid", "is-syncing");
+  if (className) feedbackResultEl.classList.add(className);
+}
+
 function saveFeedbackRecord(record) {
   try {
     const key = "mbti_agent_feedback_records";
@@ -1920,23 +1966,76 @@ function getClientId() {
   }
 }
 
-function submitFeedbackRecord(record) {
-  if (!["http:", "https:"].includes(window.location.protocol)) return;
-  if (!window.fetch) return;
-  fetch("/api/feedback", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(record),
-    keepalive: true,
-  }).catch(() => {
-    // Local persistence already succeeded; network errors should not block the user.
-  });
+function getFeedbackApiUrl() {
+  const url = String(FEEDBACK_API_URL || "").trim();
+  if (!url || url.includes(FEEDBACK_API_PLACEHOLDER)) return "";
+  return url;
+}
+
+async function submitFeedbackRecord(record) {
+  if (!["http:", "https:"].includes(window.location.protocol)) {
+    return { ok: false, reason: "unsupported_protocol" };
+  }
+  if (!window.fetch) {
+    return { ok: false, reason: "fetch_unavailable" };
+  }
+
+  const apiUrl = getFeedbackApiUrl();
+  if (!apiUrl) {
+    return { ok: false, reason: "not_configured" };
+  }
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(record),
+      keepalive: true,
+    });
+    if (!response.ok) {
+      return { ok: false, reason: `http_${response.status}` };
+    }
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, reason: "network_error" };
+  }
+}
+
+function copyFeedbackFallback() {
+  if (!feedbackFallbackRecord) return;
+  const text = JSON.stringify(feedbackFallbackRecord, null, 2);
+  copyText(text);
+  if (!feedbackCopyButtonEl) return;
+  feedbackCopyButtonEl.textContent = "已复制";
+  setTimeout(() => (feedbackCopyButtonEl.textContent = "复制反馈内容"), 1400);
+}
+
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).catch(() => copyTextWithTextarea(text));
+    return;
+  }
+  copyTextWithTextarea(text);
+}
+
+function copyTextWithTextarea(text) {
+  const helper = document.createElement("textarea");
+  helper.value = text;
+  helper.setAttribute("readonly", "");
+  helper.style.position = "fixed";
+  helper.style.opacity = "0";
+  document.body.appendChild(helper);
+  helper.select();
+  document.execCommand("copy");
+  document.body.removeChild(helper);
 }
 
 startButtonEl.addEventListener("click", start);
 restartButtonEl.addEventListener("click", reset);
 copyReportButtonEl.addEventListener("click", copyReport);
 feedbackFormEl.addEventListener("submit", handleFeedbackSubmit);
+if (feedbackCopyButtonEl) feedbackCopyButtonEl.addEventListener("click", copyFeedbackFallback);
 inputEl.addEventListener("input", resizeInput);
 inputEl.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey) {
