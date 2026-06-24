@@ -192,7 +192,7 @@ const DIMENSION_STRENGTH_GUIDE = {
     weak: "在互动与独处之间更灵活切换；是否外向更多取决于当天精力、对象与场合。",
   },
   I: {
-    strong: "独处与安静环境是主要充电方式；倾向先在心里想清楚再表达，高强度社交后更需要独处恢复。",
+    strong: "独处与安静环境是主要恢复能量方式；倾向先在心里想清楚再表达，高强度社交后更需要独处恢复。",
     medium: "通常偏向独处恢复与深度沉浸，但在合适的人与情境中也能投入互动，只是需要保留个人空间。",
     weak: "能享受独处也能享受互动；独处不一定是必需，更多是可选恢复方式，倾向会随状态波动。",
   },
@@ -291,24 +291,24 @@ const TYPE_CORE_SUMMARIES = {
 
 const QUESTIONS = {
   EI:
-    "当你连续忙了一段时间，终于有一个完整周末或小长假、没有必须完成的事时，你第一反应更想怎么恢复？\n\n可以说说：你下意识想靠近人还是先回到自己？如果不用顾虑任何人，你更想怎么安排？最后你通常会怎么做？",
+    "当你连续忙了一段时间，终于有一个完整周末或小长假、没有必须完成的事时，你第一反应更想怎么恢复？\n\n可以说说：你下意识想靠近互动，还是先回到自己？互动后更有能量，还是独处后更有能量？如果不用顾虑任何人，你最后通常会怎么安排？",
   SN:
-    "如果要你快速学一个完全陌生的东西，比如一个新软件、一道新菜、一门完全没基础的课，你最开始会怎么建立理解？\n\n可以说说：你的第一反应是先找具体步骤/示例，还是先搞清整体框架/原理？如果别人只给另一种方式，你会不会不舒服？",
+    "当你第一次接触一个陌生问题或新领域时，什么信息会让你觉得自己开始懂了？\n\n可以说说：你更需要真实事实、具体例子、步骤演示和可验证细节，还是更需要整体框架、底层原理、模式关联和未来可能性？如果别人只给另一种方式，你会卡在哪里？",
   TF:
-    "如果有人请你帮一个不太合理、又会占用你时间的忙，你内心第一反应通常是什么？最后你一般会怎么处理？\n\n如果你会拒绝、答应、拖延或找借口，都可以说。关键是：你最先顾虑的是事情是否合理，还是对方感受、关系尴尬或别人评价？",
+    "如果一个请求既牵涉事情是否合理、边界是否被占用，又牵涉对方感受、关系尴尬或别人评价，你内心第一反应通常是什么？最后你一般会怎么处理？\n\n如果你会拒绝、答应、拖延或找借口，都可以说。关键是：你最先校验的是原则和因果，还是人会不会受影响、关系会不会变紧张？",
   JP:
-    "假设你要去一个没去过的地方玩两天，或者要推进一件重要但变化很多的事，你面对“还没定下来”的状态时，第一反应是什么？\n\n可以说说：你更想先安排清楚，还是随遇而安、边走边看？如果计划突然变了，你内心是想赶紧重新确定，还是觉得顺着调整也可以？",
+    "假设你要去一个没去过的地方玩两天，或者要推进一件重要但变化很多的事，你面对“还没定下来”的状态时，第一反应是什么？\n\n可以说说：你更想先收拢、决定、安排清楚，还是愿意保留开放、边走边看，让方案在过程中长出来？如果计划突然变了，你内心更想赶紧重新确定，还是觉得顺着调整也可以？",
 };
 
 const BASE_FOLLOWUPS = {
   EI:
-    "我想再确认一下更早的反应：当你真的需要恢复时，你第一反应更想找人互动，还是先一个人静下来？如果选择另一边，会不会明显消耗？",
+    "我想再确认一下能量方向：当你真的需要恢复时，你是互动后更有能量，还是独处后更有能量？如果选择另一边，会不会明显消耗？",
   SN:
-    "我想补一下你的信息入口：你最先需要的是具体步骤/示例，还是整体框架/原理？如果别人只给另一种方式，你会觉得卡住、空泛，还是也可以接受？",
+    "我想补一下你的信息入口：你最先需要的是事实、细节、例子和演示，还是意义、框架、模式和可能性？如果别人只给另一种方式，你会觉得卡住、空泛，还是也可以接受？",
   TF:
-    "我想确认你当时的内在成本：你这样处理时主要是在避免什么？是避免事情不合理、边界被占用，还是避免对方不舒服、关系尴尬或被评价？",
+    "我想确认你当时的内在成本：你这样处理时主要是在避免什么？是避免事情不合理、边界被占用、因果不清，还是避免对方不舒服、关系尴尬或被评价？",
   JP:
-    "我想确认你面对未定状态时的第一反应：没有计划或临时变化时，你更不踏实、想赶紧定下来，还是更轻松，觉得顺着走也可以？",
+    "我想确认你面对未定状态时的第一反应：没有计划或临时变化时，你更不踏实、想赶紧定下来，还是更轻松，觉得保留空间、顺着走也可以？",
 };
 
 const SPECIAL_FOLLOWUPS = {
@@ -321,11 +321,11 @@ const SPECIAL_FOLLOWUPS = {
 const SIDE_KEYWORDS = {
   EI: {
     left: ["找人", "约", "朋友", "聊天", "分享", "热闹", "聚会", "一起", "有人陪", "见人", "互动", "出去", "社交", "人多"],
-    right: ["一个人", "独处", "安静", "自己待", "在家", "不说话", "静静", "恢复", "充电", "消耗", "不想见人", "社交累", "自己消化"],
+    right: ["一个人", "独处", "安静", "自己待", "在家", "不说话", "静静", "恢复", "恢复能量", "消耗", "不想见人", "社交累", "自己消化"],
   },
   SN: {
-    left: ["步骤", "说明书", "示例", "例子", "照着", "具体", "细节", "先做", "上手", "操作", "第一步", "实操", "案例"],
-    right: ["整体", "框架", "原理", "逻辑", "为什么", "结构", "底层", "模式", "关联", "意义", "概念", "全貌", "体系"],
+    left: ["事实", "真实", "数据", "细节", "具体", "可验证", "现实", "经验", "案例", "示例", "例子", "步骤", "说明书", "照着", "先做", "上手", "操作", "第一步", "实操", "演示"],
+    right: ["整体", "大图景", "框架", "原理", "逻辑", "为什么", "结构", "底层", "模式", "关联", "意义", "概念", "全貌", "体系", "可能性", "趋势", "未来", "想象", "类比"],
   },
   TF: {
     left: ["原则", "合理", "不合理", "边界", "事实", "客观", "规则", "公平", "对事不对人", "直接说", "说明原因", "对错", "效率", "逻辑", "该不该"],
@@ -368,17 +368,19 @@ const NEGATION_PREFIXES = ["不", "没", "没有", "无需", "不用", "不需�
 
 const SEMANTIC_SIGNAL_RULES = {
   EI: [
-    { side: "left", target: "natural", weight: 3, tag: "social_recharge", negationSensitive: true, patterns: [/(找|约|见|联系|喊|叫|和|跟).{0,8}(朋友|同学|家人|同事|人|大家)/, /(聊天|聚会|吃饭|逛街|旅游|打游戏|出去玩).{0,8}(朋友|同学|家人|一起|人)/, /(说出来|聊完|互动).{0,8}(舒服|开心|有精神|恢复|放松|充电)/, /(朋友|同学|家人|同事|大家).{0,10}(一起|在一起|聊天|互动).{0,10}(好|很好|开心|舒服|放松|有意思|不无聊)/, /(和|跟).{0,6}(朋友|同学|家人|同事).{0,10}(一起|在一起).{0,10}(好|很好|开心|舒服|放松|有意思|不无聊)/] },
+    { side: "left", target: "natural", weight: 3, tag: "social_recharge", negationSensitive: true, patterns: [/(找|约|见|联系|喊|叫|和|跟).{0,8}(朋友|同学|家人|同事|人|大家)/, /(聊天|聚会|吃饭|逛街|旅游|打游戏|出去玩).{0,8}(朋友|同学|家人|一起|人)/, /(说出来|聊完|互动).{0,8}(舒服|开心|有精神|有能量|恢复|放松|恢复能量)/, /(朋友|同学|家人|同事|大家).{0,10}(一起|在一起|聊天|互动).{0,10}(好|很好|开心|舒服|放松|有意思|不无聊|有能量)/, /(和|跟).{0,6}(朋友|同学|家人|同事).{0,10}(一起|在一起).{0,10}(好|很好|开心|舒服|放松|有意思|不无聊|有能量)/] },
     { side: "left", target: "natural", weight: 4, tag: "solitude_cost", patterns: [/(一个人|自己一个人|自己待|独处).{0,10}(无聊|闷|没意思|孤单|孤独|焦虑|难受|受不了)/, /(无聊|闷|没意思|孤单|孤独|焦虑|难受|受不了).{0,10}(一个人|自己一个人|自己待|独处)/] },
     { side: "left", target: "strategy", weight: 2, tag: "social_action", negationSensitive: true, patterns: [/(最后|通常|一般|会).{0,8}(约|找|见|聊|聚|出去)/, /(组织|参加).{0,8}(聚会|活动|饭局|旅游)/] },
     { side: "right", target: "natural", weight: 4, tag: "no_social_need", patterns: [/(不需要|不用|不想|不愿意|没必要|不必).{0,10}(和人|跟人|互动|聊天|社交|见人|别人|有人陪|人陪)/, /(不需要|不想).{0,8}(别人|有人|人).{0,6}(陪|打扰|互动)/] },
-    { side: "right", target: "natural", weight: 3, tag: "solitude_recharge", patterns: [/(一个人|自己|独处|安静|静静).{0,10}(恢复|放松|舒服|充电|清净|思考|待着|呆着)/, /不想.{0,6}(见人|说话|社交|被打扰)/, /(社交|见人|聊天).{0,8}(累|消耗|疲惫|透支)/] },
+    { side: "right", target: "natural", weight: 3, tag: "solitude_recharge", patterns: [/(一个人|自己|独处|安静|静静).{0,10}(恢复|恢复能量|有能量|放松|舒服|清净|思考|待着|呆着)/, /不想.{0,6}(见人|说话|社交|被打扰)/, /(社交|见人|聊天|互动).{0,8}(累|消耗|疲惫|透支)/] },
     { side: "right", target: "strategy", weight: 2, tag: "solitude_action", patterns: [/(最后|通常|一般|会).{0,8}(一个人|自己待|在家|休息|睡觉|看视频|听音乐)/] },
   ],
   SN: [
+    { side: "left", target: "natural", weight: 4, tag: "facts_entry", negationSensitive: true, patterns: [/(先|第一步|一开始|最开始).{0,12}(事实|真实|现实|数据|细节|具体|证据|经验|案例|例子|示例|现象)/, /(需要|想要|最好|更想|必须).{0,12}(事实|真实|现实|数据|细节|具体|证据|经验|案例|例子|示例|可验证|落地)/, /(没有|缺少).{0,6}(事实|数据|细节|例子|案例|示范|步骤|具体).{0,10}(卡|虚|空|不懂|没底|不踏实|没法开始)/] },
     { side: "left", target: "natural", weight: 3, tag: "step_entry", negationSensitive: true, patterns: [/(先|第一步|一开始|最开始).{0,10}(步骤|示例|例子|说明|操作|模仿|照着|问会的人|看别人|展示|示范|演示)/, /教程.{0,8}(步骤|操作|实操|演示|示范|照着|一步步)/, /(步骤|操作|实操|演示|示范|照着|一步步).{0,8}教程/, /(需要|想要|最好|更想).{0,10}(具体|步骤|例子|示例|案例|演示|展示|示范|人教|别人教|手把手|问别人|问会的人)/, /(只讲|光讲).{0,5}(原理|框架|概念).{0,8}(空|虚|卡|没用|不懂)/] },
     { side: "left", target: "strategy", weight: 2, tag: "step_action", patterns: [/(查|搜|找).{0,8}(教程|步骤|攻略|案例|示例|视频)/, /(照着|跟着|看着).{0,8}(做|操作|学|别人|展示|示范|演示)/, /(问|请教).{0,8}(别人|会的人|懂的人|老师|朋友)/, /(有人|别人).{0,8}(展示|示范|演示|教一下|带着做)/] },
-    { side: "right", target: "natural", weight: 3, tag: "framework_entry", patterns: [/(先|第一步|一开始|最开始).{0,10}(整体|框架|原理|逻辑|结构|全貌|底层|为什么|体系)/, /(需要|想要|最好|更想).{0,8}(整体|框架|原理|逻辑|结构|全貌|体系)/, /(没有|缺少).{0,5}(框架|逻辑|结构|全貌|体系).{0,8}(乱|迷失|不舒服|卡|难受)/, /太多.{0,5}(细节|步骤).{0,8}(迷失|乱|烦|抓不到)/] },
+    { side: "right", target: "natural", weight: 4, tag: "meaning_entry", patterns: [/(先|第一步|一开始|最开始).{0,12}(意义|可能性|趋势|模式|关联|大图景|全局|未来|想象|类比)/, /(需要|想要|最好|更想|必须).{0,12}(意义|可能性|趋势|模式|关联|大图景|全局|未来|想象|类比)/, /(没有|缺少).{0,6}(意义|模式|关联|大图景|全局|方向|可能性).{0,10}(乱|迷失|不舒服|卡|难受|抓不到)/] },
+    { side: "right", target: "natural", weight: 3, tag: "framework_entry", patterns: [/(先|第一步|一开始|最开始).{0,10}(整体|框架|原理|逻辑|结构|全貌|底层|为什么|体系)/, /(需要|想要|最好|更想).{0,8}(整体|框架|原理|逻辑|结构|全貌|体系)/, /(没有|缺少).{0,5}(框架|逻辑|结构|全貌|体系).{0,8}(乱|迷失|不舒服|卡|难受)/, /太多.{0,5}(细节|步骤).{0,8}(迷失|乱|烦|抓不到)/, /(只给|只有|光给).{0,6}(步骤|细节|操作).{0,10}(不舒服|卡|烦|乱|抓不到|没意义)/] },
     { side: "right", target: "strategy", weight: 2, tag: "framework_action", patterns: [/(搭|建立|理解|搞清).{0,8}(框架|结构|逻辑|原理|体系|全貌)/, /(从|看).{0,8}(整体|结构|底层|原理).{0,8}(入手|开始)/] },
   ],
   TF: [
@@ -447,7 +449,7 @@ function reset() {
   sendButtonEl.disabled = true;
   appendMessage(
     "agent",
-    "欢迎来到心灵空间。\n\n这次测评不会只看你最后做了什么，而会尽量识别：第一反应、自然偏好、内在成本，以及你后来发展出的外显策略。\n\n准备好了就开始。"
+    "欢迎来到心灵空间。\n\n这次测评不会只看你最后做了什么，而会尽量识别：第一反应、自然偏好、内在成本，以及你后来发展出的外显策略。\n\n最后给出的类型是 Best-Fit 初判，也就是系统根据本轮回答给出的最贴近方向，仍然需要你用自我认知校准。\n\n准备好了就开始。"
   );
 }
 
@@ -715,12 +717,12 @@ function buildCustomFollowup(dimension, result) {
     return `你刚才提到“${snippet}”。我想区分一下：你调整安排时，心里是为了尽快恢复确定感、否则会不踏实，还是只是顺势换个方案，其实不太紧张？`;
   }
 
-  if (dimension === "SN" && signalPresent(signals, ["step_action"]) && !signalPresent(signals, ["step_entry", "framework_entry"])) {
-    return `你刚才提到“${snippet}”。我想确认这是不是你的信息入口：你需要别人展示/示范，是因为看到具体操作才更容易理解，还是只是卡住之后临时求助，平时第一步仍会先想整体原理？`;
+  if (dimension === "SN" && signalPresent(signals, ["step_action"]) && !signalPresent(signals, ["facts_entry", "step_entry", "meaning_entry", "framework_entry"])) {
+    return `你刚才提到“${snippet}”。我想确认这是不是你的信息入口：你找视频或教程时，主要是在找可照着做的事实、例子和演示，还是在找整体原理、模式和背后的逻辑？`;
   }
 
   if (dimension === "EI" && signalPresent(signals, ["solitude_action", "social_action"]) && !result.evidence.hasInnerCost) {
-    return `你刚才提到“${snippet}”。我想确认这背后的能量方向：这样做之后你是更恢复、更像充电，还是只是当时这样安排，换成另一边也差不多？`;
+    return `你刚才提到“${snippet}”。我想确认这背后的能量方向：这样做之后你是更恢复、更有能量，还是只是当时这样安排，换成另一边也差不多？`;
   }
 
   return "";
@@ -731,16 +733,16 @@ function buildDimensionGapFollowup(dimension, result) {
 
   if (dimension === "EI") {
     if (!result.evidence.hasFirstReaction) {
-      return `你刚才说“${snippet}”。如果只看真正需要恢复的第一反应，你更想先找人说说、被互动激活，还是先一个人安静下来？`;
+      return `你刚才说“${snippet}”。如果只看真正需要恢复的第一反应，你更想先找人说说、被互动激活，还是先一个人安静下来？互动后更有能量，还是独处后更有能量？`;
     }
-    return `你刚才说“${snippet}”。我想补的是能量感：这个选择会让你更有电，还是只是可接受？如果换成另一边，会明显消耗吗？`;
+    return `你刚才说“${snippet}”。我想补的是能量感：这个选择会让你更有能量，还是只是可接受？如果换成另一边，会明显消耗吗？`;
   }
 
   if (dimension === "SN") {
     if (!result.evidence.hasFirstReaction) {
-      return `你刚才说“${snippet}”。如果回到最开始那一步，你是先需要具体示例、步骤和演示，还是先需要整体框架、原理和逻辑？`;
+      return `你刚才说“${snippet}”。如果回到最开始那一步，你是先需要事实、细节、具体例子和演示，还是先需要整体框架、原理、模式和可能性？`;
     }
-    return `你刚才说“${snippet}”。如果别人只给你另一种方式，比如只给步骤不给框架，或只讲原理不给示例，你会卡住吗？卡在哪一边？`;
+    return `你刚才说“${snippet}”。如果别人只给你另一种方式，比如只给细节不给大图景，或只讲原理不给事实和示例，你会卡住吗？卡在哪一边？`;
   }
 
   if (dimension === "TF") {
@@ -868,6 +870,14 @@ function buildReason(dimension, answer, naturalSide, strategySide, evidence, cos
     return `你提到“${snippet}”。这里不能只抓“一个人”，因为你同时表达了独处会无聊或没意思；这更像恢复时能量会被互动激活，因此更接近靠近互动（E）。`;
   }
 
+  if (dimension === "SN" && naturalSide === "left" && signalPresent(evidence.semanticSignals || [], ["facts_entry", "step_entry"])) {
+    return `你提到“${snippet}”。这里不是看你用了什么学习渠道，而是看你需要事实、细节、例子或演示来建立理解，因此更接近具体步骤（S）。`;
+  }
+
+  if (dimension === "SN" && naturalSide === "right" && signalPresent(evidence.semanticSignals || [], ["meaning_entry", "framework_entry"])) {
+    return `你提到“${snippet}”。这里的关键是你先要意义、模式、大图景或底层结构来建立理解，因此更接近整体框架（N）。`;
+  }
+
   if (naturalSide && strategySide && naturalSide !== strategySide) {
     return `你提到“${snippet}”。这里更像是自然偏好接近${naturalText}，但外显策略可能呈现${strategyText}，两者需要分开看。`;
   }
@@ -934,8 +944,10 @@ function buildReportModel(resultsMap) {
     evidenceLines: reasonLines(results),
     riskLines: compactRiskLines(results),
     boundaryLines: MBTI_BOUNDARY_PRINCIPLES,
+    bestFitLines: bestFitCalibrationLines(results, naturalType, strategyType, clarity),
     suggestionLines: [
       "重点看第一反应和后来调整后的做法是否一致，这个分离点通常比四个字母更有解释力。",
+      "把这份结果当作 Best-Fit 初判：如果某一维与你的自我认知不贴合，优先回到那一维的原始回答和追问，而不是勉强接受四个字母。",
       "不要努力变成另一种类型，而是看见自己天然省力的地方、容易过度使用的地方，以及不同情境中该如何说明自己的需要。",
     ],
   };
@@ -972,6 +984,9 @@ function buildReport(resultsMap) {
     "",
     "判断依据：",
     ...model.evidenceLines,
+    "",
+    "Best-Fit 校准：",
+    ...model.bestFitLines,
     "",
     "偏好与策略的关系：",
     model.separated.length ? model.separated.map(separationLine).join("\n") : "这次回答里，自然偏好和外显策略没有出现特别明显的分离。",
@@ -1057,6 +1072,12 @@ function renderReport(model) {
       <summary>展开查看判断依据</summary>
       <div class="report-details-body">${listHtml(model.evidenceLines)}</div>
     </details>
+
+    <section class="report-block">
+      <span class="report-kicker">Best-Fit 校准</span>
+      <h3>把结果当作初判，而不是定型</h3>
+      ${listHtml(model.bestFitLines)}
+    </section>
 
     <details class="report-details">
       <summary>展开查看沟通与变化建议</summary>
@@ -1155,6 +1176,34 @@ function tagListHtml(tags, className) {
   return tags.map((tag) => `<span class="tag ${className}">${escapeHtml(tag)}</span>`).join("");
 }
 
+function bestFitCalibrationLines(results, naturalType, strategyType, clarity) {
+  const unclear = results.filter((item) => item.insufficient || item.naturalLetter === "?");
+  const separated = results.filter((item) => item.alignment === "分离");
+  const contextual = results.filter((item) => item.contextDependency || item.ambiguous || item.evidence?.hasSemanticConflict);
+  const stable = results.filter(isTypicalDimension);
+  const lines = [
+    `- 系统初判方向是 ${naturalType}，清晰度为“${clarity}”。这不是最终标签，而是基于本轮回答的 Best-Fit 候选，需要继续用自我认知校准。`,
+  ];
+
+  if (strategyType !== naturalType) {
+    lines.push(`- 外显策略更接近 ${strategyType}，说明别人看到的行为可能和你的自然省力方式不完全一致。`);
+  }
+  if (stable.length) {
+    lines.push(`- 更值得先相信的维度是：${stable.map((item) => `${item.dimension}（${safeSideLabel(item.dimension, item.naturalSide)}）`).join("、")}。这些维度回答里有第一反应、内在成本或稳定证据。`);
+  }
+  if (separated.length) {
+    lines.push(`- 需要分开看的维度是：${separated.map((item) => item.dimension).join("、")}。这些地方要区分“自然偏好”和“后来形成的处理策略”。`);
+  }
+  if (contextual.length) {
+    lines.push(`- 容易受情境影响的维度是：${contextual.map((item) => item.dimension).join("、")}。这些地方不适合用一句“我是某型”说死。`);
+  }
+  if (unclear.length) {
+    lines.push(`- 还不宜下定论的维度是：${unclear.map((item) => item.dimension).join("、")}。后续应优先补这些维度的真实场景，而不是强行凑齐四个字母。`);
+  }
+  lines.push("- 自我校准时，优先问：这一维的描述是否让我感觉“这就是我自然省力的方式”？如果只是“我也会这么做”，还不足以说明它是偏好。");
+  return lines;
+}
+
 function stripBullet(line) {
   return String(line || "").replace(/^-\s*/, "");
 }
@@ -1224,8 +1273,8 @@ function compactRiskLines(results) {
   if (results.some((item) => item.dimension === "JP")) {
     lines.push("- JP：随遇而安、不做计划、不安排通常更接近 P；快速重排则要看是在恢复掌控还是顺势调整。");
   }
-  lines.push("- EI：能社交不等于 E，关键是互动后更充电还是更消耗。");
-  lines.push("- SN：能理解抽象不等于 N，关键是第一理解入口更需要步骤还是框架。");
+  lines.push("- EI：能社交不等于 E，关键是互动后更有能量，还是独处后更有能量。");
+  lines.push("- SN：能理解抽象不等于 N，关键是第一理解入口更需要事实细节，还是意义模式。");
   return lines;
 }
 
@@ -1455,8 +1504,8 @@ function riskLines(results) {
   if (jp) {
     lines.push("- JP：不能只看有没有重新安排。随遇而安、不做计划、不安排通常更接近 P；快速重排可能是 J 的恢复掌控，也可能只是 P 的顺势调整。");
   }
-  lines.push("- EI：能社交不等于 E，关键是社交之后更充电还是更消耗。");
-  lines.push("- SN：能理解抽象不等于 N，关键是第一理解入口更需要具体步骤还是整体框架。");
+  lines.push("- EI：能社交不等于 E，关键是互动后更有能量，还是独处后更有能量。");
+  lines.push("- SN：能理解抽象不等于 N，关键是第一理解入口更需要事实细节，还是意义模式。");
   lines.push(`- 偏好误读：${CONFLICT_MISREAD_GUIDE.EI}`);
   lines.push(`- 偏好误读：${CONFLICT_MISREAD_GUIDE.SN}`);
   lines.push(`- 偏好误读：${CONFLICT_MISREAD_GUIDE.TF}`);
@@ -1541,9 +1590,9 @@ function summarizeSemanticEvidence(dimension, text, signals) {
   const hasConflict = hasLeftNatural && hasRightNatural && Math.abs(naturalScores.left - naturalScores.right) <= 3;
 
   return {
-    hasFirstReaction: containsAny(text, REACTION_MARKERS) || signalPresent(signals, ["social_recharge", "solitude_cost", "no_social_need", "solitude_recharge", "step_entry", "framework_entry", "principle_cost", "relationship_cost", "closure_need", "open_pace"]),
+    hasFirstReaction: containsAny(text, REACTION_MARKERS) || signalPresent(signals, ["social_recharge", "solitude_cost", "no_social_need", "solitude_recharge", "facts_entry", "step_entry", "meaning_entry", "framework_entry", "principle_cost", "relationship_cost", "closure_need", "open_pace"]),
     hasNaturalPreference: naturalScores.left > 0 || naturalScores.right > 0,
-    hasInnerCost: signalPresent(signals, ["solitude_cost", "no_social_need", "solitude_recharge", "framework_entry", "step_entry", "principle_cost", "relationship_cost", "closure_need", "constraint_cost"]),
+    hasInnerCost: signalPresent(signals, ["solitude_cost", "no_social_need", "solitude_recharge", "facts_entry", "meaning_entry", "framework_entry", "step_entry", "principle_cost", "relationship_cost", "closure_need", "constraint_cost"]),
     hasStrategy: strategyScores.left > 0 || strategyScores.right > 0,
     hasContext: containsAny(text, CONTEXT_WORDS) || containsAny(text, AMBIGUOUS_WORDS),
     hasConflict,
