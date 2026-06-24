@@ -550,6 +550,7 @@ function analyzeAnswer(dimension, answer, phase, followupUsed) {
   const contextDependency = containsAny(text, CONTEXT_WORDS);
   const semanticSignals = collectSemanticSignals(dimension, text);
   const semanticEvidence = summarizeSemanticEvidence(dimension, text, semanticSignals);
+  const hasJpPriorityPlan = dimension === "JP" && hasJpPriorityPlanSignal(text);
 
   const naturalScores = scoreNatural(dimension, text, initialPart);
   const strategyScores = scoreStrategy(dimension, text, strategyPart);
@@ -566,11 +567,12 @@ function analyzeAnswer(dimension, answer, phase, followupUsed) {
     hasNaturalPreference: containsAny(text, NATURAL_MARKERS) || Boolean(wholeNaturalSide) || semanticEvidence.hasNaturalPreference,
     hasInnerCost: containsAny(text, COST_MARKERS) || hasOppositeCostSignal(dimension, text) || semanticEvidence.hasInnerCost,
     hasStrategy: containsAny(text, STRATEGY_MARKERS) || Boolean(strategySide) || hasExplicitAction(text) || semanticEvidence.hasStrategy,
-    hasContext: contextDependency || ambiguous || semanticEvidence.hasContext,
-    hasSemanticConflict: semanticEvidence.hasConflict,
+    hasContext: contextDependency || ambiguous || semanticEvidence.hasContext || hasJpPriorityPlan,
+    hasSemanticConflict: semanticEvidence.hasConflict || hasJpPriorityPlan,
     hasExcuse: dimension === "TF" && (containsAny(text, EXCUSE_WORDS) || semanticEvidence.hasExcuse),
     hasReasonForExcuse: dimension === "TF" && (containsAny(text, FEELING_REASON_WORDS) || containsAny(text, BOUNDARY_REASON_WORDS) || semanticEvidence.hasFeelingReason || semanticEvidence.hasBoundaryReason),
     hasReplan: dimension === "JP" && (hasJpReplanAction(text) || semanticEvidence.hasReplan),
+    hasJpPriorityPlan,
     hasJpJCost: dimension === "JP" && (hasJpJCostSignal(text) || semanticEvidence.hasJpJCost),
     hasJpPEase: dimension === "JP" && (hasJpPEaseSignal(text) || semanticEvidence.hasJpPEase),
     hasJpPCost: dimension === "JP" && (hasJpPCostSignal(text) || semanticEvidence.hasJpPCost),
@@ -592,7 +594,7 @@ function analyzeAnswer(dimension, answer, phase, followupUsed) {
   if (dimension === "TF" && evidence.hasExcuse && !evidence.hasReasonForExcuse) {
     resolvedNaturalSide = null;
   }
-  if (dimension === "JP" && (hasNegatedPlanning(text) || semanticEvidence.hasOpenPace)) {
+  if (dimension === "JP" && (hasNegatedPlanning(text) || semanticEvidence.hasOpenPace) && !evidence.hasJpPriorityPlan) {
     resolvedNaturalSide = "right";
     resolvedStrategySide = "right";
   }
@@ -600,7 +602,7 @@ function analyzeAnswer(dimension, answer, phase, followupUsed) {
     resolvedNaturalSide = "left";
     resolvedStrategySide = resolvedStrategySide === "right" ? "left" : (resolvedStrategySide || "left");
   }
-  if (dimension === "JP" && (evidence.hasJpPEase || evidence.hasJpPCost) && !evidence.hasJpJCost) {
+  if (dimension === "JP" && (evidence.hasJpPEase || evidence.hasJpPCost) && !evidence.hasJpJCost && !evidence.hasJpPriorityPlan) {
     resolvedNaturalSide = "right";
     resolvedStrategySide = resolvedStrategySide || "right";
   }
@@ -623,7 +625,8 @@ function analyzeAnswer(dimension, answer, phase, followupUsed) {
   }
 
   const costLevel = detectCostLevel(dimension, text, resolvedNaturalSide);
-  const confidence = estimateConfidence(resolvedNaturalSide, resolvedStrategySide, evidence, ambiguous, contextDependency, phase);
+  const effectiveContextDependency = contextDependency || ambiguous || evidence.hasContext;
+  const confidence = estimateConfidence(resolvedNaturalSide, resolvedStrategySide, evidence, ambiguous, effectiveContextDependency, phase);
   const insufficient = confidence < 0.48 || !resolvedNaturalSide;
   const reason = buildReason(dimension, answer, resolvedNaturalSide, resolvedStrategySide, evidence, costLevel);
 
@@ -633,7 +636,7 @@ function analyzeAnswer(dimension, answer, phase, followupUsed) {
     strategySide: resolvedStrategySide,
     evidence,
     ambiguous,
-    contextDependency: contextDependency || ambiguous || evidence.hasContext,
+    contextDependency: effectiveContextDependency,
     insufficient,
     costLevel,
     confidence,
@@ -717,8 +720,20 @@ function buildCustomFollowup(dimension, result) {
     return `你刚才提到“${snippet}”。我想区分一下：你调整安排时，心里是为了尽快恢复确定感、否则会不踏实，还是只是顺势换个方案，其实不太紧张？`;
   }
 
+  if (dimension === "JP" && result.evidence.hasJpPriorityPlan) {
+    return `你刚才提到“${snippet}”。我想区分一下：你是“重要事项必须先计划，否则会不踏实”，还是“有基本计划就好，计划里本来就要保留开放空间”？`;
+  }
+
   if (dimension === "SN" && signalPresent(signals, ["step_action"]) && !signalPresent(signals, ["facts_entry", "step_entry", "meaning_entry", "framework_entry"])) {
     return `你刚才提到“${snippet}”。我想确认这是不是你的信息入口：你找视频或教程时，主要是在找可照着做的事实、例子和演示，还是在找整体原理、模式和背后的逻辑？`;
+  }
+
+  if (dimension === "SN" && signalPresent(signals, ["meaning_entry", "framework_entry"]) && !result.evidence.hasInnerCost) {
+    return `你刚才提到“${snippet}”。我想确认这是不是稳定偏好：如果别人只给事实、步骤和例子，但暂时不给整体逻辑，你会明显卡住吗？还是只是先有大图会更舒服？`;
+  }
+
+  if (dimension === "SN" && signalPresent(signals, ["facts_entry", "step_entry"]) && !result.evidence.hasInnerCost) {
+    return `你刚才提到“${snippet}”。我想确认这是不是稳定偏好：如果别人先讲框架、意义和原理，但暂时不给例子和步骤，你会明显没底吗？还是两种入口都可以？`;
   }
 
   if (dimension === "EI" && signalPresent(signals, ["solitude_action", "social_action"]) && !result.evidence.hasInnerCost) {
@@ -784,6 +799,7 @@ function mergeResults(pending, followup) {
     hasExcuse: pending.evidence.hasExcuse || followup.evidence.hasExcuse,
     hasReasonForExcuse: pending.evidence.hasReasonForExcuse || followup.evidence.hasReasonForExcuse,
     hasReplan: pending.evidence.hasReplan || followup.evidence.hasReplan,
+    hasJpPriorityPlan: pending.evidence.hasJpPriorityPlan || followup.evidence.hasJpPriorityPlan,
     hasJpJCost: pending.evidence.hasJpJCost || followup.evidence.hasJpJCost,
     hasJpPEase: pending.evidence.hasJpPEase || followup.evidence.hasJpPEase,
     hasJpPCost: pending.evidence.hasJpPCost || followup.evidence.hasJpPCost,
@@ -848,6 +864,10 @@ function buildReason(dimension, answer, naturalSide, strategySide, evidence, cos
 
   if (dimension === "TF" && evidence.hasExcuse && naturalSide === "right") {
     return `你提到“${snippet}”。找理由或借口本身不等于 F，但如果背后是在担心对方感受、关系尴尬或评价，它说明决策里存在明显的关系成本。`;
+  }
+
+  if (dimension === "JP" && evidence.hasJpPriorityPlan) {
+    return `你提到“${snippet}”。这不是单纯“不计划”，而是重要事项会计划、其他部分保留弹性，所以这一维需要追问内在成本后再判断。`;
   }
 
   if (dimension === "JP" && naturalSide === "right" && hasNegatedPlanning(answer)) {
@@ -1233,6 +1253,7 @@ function dimensionCardData(item) {
 
 function dimensionStatusLabel(item) {
   if (item.insufficient || item.naturalLetter === "?") return "需要继续观察";
+  if (item.evidence?.hasJpPriorityPlan) return "计划与弹性并存，需看情境";
   if (item.alignment === "分离") return "自然偏好与外显策略分离";
   if (item.contextDependency || item.ambiguous || item.evidence?.hasSemanticConflict) return "容易随情境变化";
   if (isTypicalDimension(item)) return "比较典型稳定";
@@ -1242,6 +1263,9 @@ function dimensionStatusLabel(item) {
 function compactDimensionSummary(item) {
   if (item.insufficient || item.naturalLetter === "?") {
     return "证据还不够支撑明确判断。";
+  }
+  if (item.evidence?.hasJpPriorityPlan) {
+    return "重要事项会计划，但计划里也保留开放空间，这一维更适合居中理解。";
   }
   if (item.alignment === "分离") {
     return `内在更接近${safeSideLabel(item.dimension, item.naturalSide)}，但行为上可能呈现${safeSideLabel(item.dimension, item.strategySide)}。`;
@@ -1425,12 +1449,20 @@ function isTypicalDimension(item) {
     !item.ambiguous &&
     !item.evidence?.hasSemanticConflict &&
     !item.insufficient &&
+    hasStableMechanism(item) &&
     item.confidence >= 0.58
   );
 }
 
+function hasStableMechanism(item) {
+  if (item.evidence?.hasJpPriorityPlan) return false;
+  return Boolean(item.followupUsed || item.evidence?.hasInnerCost || item.costLevel !== "未明确" || item.confidence >= 0.74);
+}
+
 function dimensionStrength(item) {
   if (item.insufficient || item.naturalLetter === "?") return "信息不足";
+  if (item.evidence?.hasJpPriorityPlan) return "计划与弹性并存";
+  if (item.costLevel === "未明确" && !item.followupUsed) return "有倾向但不宜说满";
   if (item.confidence >= 0.72 && item.alignment === "一致") return "较强且稳定";
   if (item.confidence >= 0.58 && item.alignment === "一致") return "中等偏强";
   if (item.alignment === "分离") return "自然偏好与外显策略分离";
@@ -1448,11 +1480,17 @@ function dimensionStrengthDescription(item) {
     return "这一维需要结合更多具体情境继续观察。";
   }
 
+  if (item.evidence?.hasJpPriorityPlan) {
+    return "这一维不是简单的“不计划”，而是重要事项需要计划、计划里又保留开放空间，所以更适合先按居中和情境化理解。";
+  }
   if (item.alignment === "分离") {
     return `${trimChinesePeriod(guide.medium)}；但你的自然偏好和外显策略不完全一致，说明这一维容易被责任、关系或训练拉到另一侧。`;
   }
   if (item.contextDependency || item.ambiguous || item.evidence?.hasSemanticConflict) {
     return `${trimChinesePeriod(guide.weak)}；本次回答里有情境依赖，所以不适合说成固定表现。`;
+  }
+  if (item.costLevel === "未明确" && !item.followupUsed) {
+    return `${trimChinesePeriod(guide.weak)}；本次只看到方向线索，还没看到“另一侧会不会卡住或消耗”的证据，所以不适合说强。`;
   }
   if (item.confidence >= 0.72) {
     return guide.strong;
@@ -1478,6 +1516,9 @@ function dimensionVariationReason(item) {
     return "第一反应或内在成本还不够清楚，暂时不适合定型。";
   }
   if (item.contextDependency || item.ambiguous || item.evidence?.hasSemanticConflict) {
+    if (item.evidence?.hasJpPriorityPlan) {
+      return "重要事项会计划，但计划里保留开放空间，所以这一维更像计划与弹性的组合，而不是单纯 P 或 J。";
+    }
     return `会受具体关系、任务或场景影响，行为可能在${safeSideLabel(item.dimension, item.naturalSide)}和另一侧之间切换。`;
   }
   if (item.alignment === "分离") {
@@ -1521,8 +1562,10 @@ function decideClarity(results) {
   const average = results.reduce((sum, item) => sum + item.confidence, 0) / results.length;
   const unclearCount = results.filter((item) => item.insufficient || item.naturalLetter === "?").length;
   const contextCount = results.filter((item) => item.contextDependency || item.ambiguous || item.evidence?.hasSemanticConflict).length;
-  if (average >= 0.7 && unclearCount === 0 && contextCount === 0) return "较清晰";
-  if (average >= 0.5 && unclearCount <= 2 && contextCount <= 2) return "中等，需要结合具体场景理解";
+  const separatedCount = results.filter((item) => item.alignment === "分离").length;
+  const unclearCostCount = results.filter((item) => item.costLevel === "未明确" && !item.followupUsed && !item.insufficient).length;
+  if (average >= 0.72 && unclearCount === 0 && contextCount === 0 && separatedCount === 0 && unclearCostCount === 0) return "较清晰";
+  if (average >= 0.5 && unclearCount <= 2 && contextCount + separatedCount + unclearCostCount <= 3) return "中等，需要结合具体场景理解";
   return "偏探索，暂不适合下定论";
 }
 
@@ -1548,9 +1591,9 @@ function detectCostLevel(dimension, text, naturalSide) {
 
 function hasOppositeCostSignal(dimension, text) {
   if (dimension === "EI") return containsAny(text, ["社交累", "见人累", "一个人会闷", "独处焦虑"]);
-  if (dimension === "SN") return containsAny(text, ["没有框架会乱", "只给步骤会不舒服", "只讲原理太空", "没步骤会卡"]);
+  if (dimension === "SN") return hasSnCostSignal(text);
   if (dimension === "TF") return containsAny(text, FEELING_REASON_WORDS.concat(["边界被占", "被占便宜", "不公平"])) || signalPresent(collectSemanticSignals(dimension, text), ["relationship_cost", "principle_cost", "explanation_cost"]);
-  if (dimension === "JP") return containsAny(text, ["没计划不安", "不确定焦虑", "计划太死", "被安排很束缚"]) || hasJpJCostSignal(text) || hasJpPEaseSignal(text) || hasJpPCostSignal(text) || signalPresent(collectSemanticSignals(dimension, text), ["closure_need", "open_pace", "constraint_cost"]);
+  if (dimension === "JP") return containsAny(text, ["没计划不安", "不确定焦虑", "计划太死", "被安排很束缚"]) || hasJpJCostSignal(text) || hasJpPEaseSignal(text) || hasJpPCostSignal(text) || signalPresent(collectSemanticSignals(dimension, text), ["closure_need", "constraint_cost"]);
   return false;
 }
 
@@ -1592,7 +1635,7 @@ function summarizeSemanticEvidence(dimension, text, signals) {
   return {
     hasFirstReaction: containsAny(text, REACTION_MARKERS) || signalPresent(signals, ["social_recharge", "solitude_cost", "no_social_need", "solitude_recharge", "facts_entry", "step_entry", "meaning_entry", "framework_entry", "principle_cost", "relationship_cost", "closure_need", "open_pace"]),
     hasNaturalPreference: naturalScores.left > 0 || naturalScores.right > 0,
-    hasInnerCost: signalPresent(signals, ["solitude_cost", "no_social_need", "solitude_recharge", "facts_entry", "meaning_entry", "framework_entry", "step_entry", "principle_cost", "relationship_cost", "closure_need", "constraint_cost"]),
+    hasInnerCost: signalPresent(signals, ["solitude_cost", "no_social_need", "solitude_recharge", "principle_cost", "relationship_cost", "closure_need", "constraint_cost"]) || (dimension === "SN" && hasSnCostSignal(text)),
     hasStrategy: strategyScores.left > 0 || strategyScores.right > 0,
     hasContext: containsAny(text, CONTEXT_WORDS) || containsAny(text, AMBIGUOUS_WORDS),
     hasConflict,
@@ -1741,6 +1784,26 @@ function hasNegatedPlanning(text) {
     pattern.lastIndex = 0;
     return pattern.test(text);
   }) || /不.{0,6}(做计划|计划|安排|规划|定行程|订路线)/.test(text) || /(到时候|到了|到了地方|到那里|打那里|现场).{0,8}(再说|再看|再定|再决定|再安排)/.test(text) || containsAny(text, ["随遇而安", "边走边看", "走一步看一步", "不想定死", "到时候再说", "到了再说", "到了地方再说", "到那里再说", "打那里再说"]);
+}
+
+function hasSnCostSignal(text) {
+  return (
+    /(没有|没|缺少|不给|如果没有).{0,8}(事实|数据|细节|例子|案例|示例|演示|步骤|具体|落地).{0,12}(卡|虚|空|不懂|没底|不踏实|没法开始|无从下手)/.test(text) ||
+    /(没有|没|缺少|不给|如果没有).{0,8}(框架|逻辑|结构|全貌|体系|大图景|意义|模式|方向|原理).{0,12}(乱|迷失|不舒服|卡|难受|抓不到|没意义)/.test(text) ||
+    /(只给|只有|光给|只讲|光讲).{0,8}(步骤|细节|操作|事实|案例|例子).{0,12}(不舒服|卡|烦|乱|抓不到|没意义|迷失)/.test(text) ||
+    /(只讲|光讲|只有|只给).{0,8}(原理|框架|概念|逻辑|大图景).{0,12}(空|虚|卡|不懂|没用|落不了地|无从下手)/.test(text)
+  );
+}
+
+function hasJpPriorityPlanSignal(text) {
+  const importantPlan =
+    /(重要|关键|大事|必要|必须|核心|主要).{0,10}(计划|安排|规划|定下来|确定|提前)/.test(text) ||
+    /(只|只会|只做|只安排|只计划).{0,10}(重要|关键|大事|必要|必须|核心|主要).{0,10}(计划|安排|规划|定下来|确定)?/.test(text);
+  const openForRest =
+    /(不重要|小事|其他|剩下|剩余|别的|其余|其他事情).{0,12}(无所谓|随便|看情况|到时候|不计划|不安排|边走边看|都可以|都行|开放|弹性)/.test(text) ||
+    /(计划|安排|规划).{0,12}(保留|留出|留下).{0,8}(开放|弹性|空间|余地|变化)/.test(text) ||
+    /(基本|大概|大致).{0,8}(计划|安排|规划).{0,12}(就好|可以|够了|不用太细|不用定死)/.test(text);
+  return importantPlan && openForRest;
 }
 
 function hasJpJCostSignal(text) {
