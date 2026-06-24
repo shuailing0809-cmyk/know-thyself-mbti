@@ -66,6 +66,45 @@ test("EI follow-up uses energy wording instead of casual battery wording", () =>
   assert.doesNotMatch(followup, /有电/);
 });
 
+test("SN asks a follow-up when the answer only mentions overall logic", () => {
+  const result = debug.analyzeAnswer("SN", "需要把整体的逻辑都搞清楚", "main", false);
+  const followup = debug.selectFollowup("SN", result);
+
+  assert.equal(result.naturalLetter, "N");
+  assert.equal(result.evidence.hasInnerCost, false);
+  assert.match(followup, /整体逻辑|只给事实、步骤和例子|稳定偏好/);
+});
+
+test("JP treats priority planning with openness as contextual instead of strong P", () => {
+  const result = debug.analyzeAnswer("JP", "只做最重要的计划和安排，不重要的就无所谓了", "main", false);
+  const followup = debug.selectFollowup("JP", result);
+  const model = debug.buildReportModel({
+    EI: debug.analyzeAnswer("EI", "第一反应会找朋友聊天，互动后更有能量，一个人久了会无聊", "main", false),
+    SN: debug.analyzeAnswer("SN", "一开始会先找整体框架和背后的模式，如果只有步骤没有大图景会卡住", "main", false),
+    TF: debug.analyzeAnswer("TF", "第一反应会担心对方不舒服和关系尴尬，最后可能还是委婉答应", "main", false),
+    JP: result,
+  });
+  const jpCard = model.dimensionCards.find((item) => item.dimension === "JP");
+
+  assert.equal(result.evidence.hasJpPriorityPlan, true);
+  assert.equal(result.contextDependency, true);
+  assert.match(followup, /重要事项必须先计划|保留开放空间/);
+  assert.notEqual(jpCard.status, "比较典型稳定");
+  assert.equal(jpCard.strength, "计划与弹性并存");
+  assert.match(jpCard.summary, /重要事项会计划/);
+});
+
+test("mixed or cost-unclear reports are not labeled clear too early", () => {
+  const model = debug.buildReportModel({
+    EI: debug.analyzeAnswer("EI", "第一反应会找朋友聊天，互动后更有能量，但最后通常会自己待着消化", "main", false),
+    SN: debug.analyzeAnswer("SN", "需要把整体的逻辑都搞清楚", "main", false),
+    TF: debug.analyzeAnswer("TF", "不太会拒绝，担心影响关系，所以大概率会接受", "main", false),
+    JP: debug.analyzeAnswer("JP", "只做最重要的计划和安排，不重要的就无所谓了", "main", false),
+  });
+
+  assert.notEqual(model.clarity, "较清晰");
+});
+
 test("report includes Best-Fit calibration language", () => {
   const results = {
     EI: debug.analyzeAnswer("EI", "第一反应会找朋友聊聊，互动后更有能量，一个人久了会无聊", "main", false),
